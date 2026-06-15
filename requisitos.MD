@@ -45,6 +45,7 @@
 >BR03 - A goal must be scored by a player; There can not be a goal without a player;<br>
 >BR04 - A team cannot have more than one player with the same name; Thus, there can only be two Messi if they play for different teams;<br>
 >BR05 - An own goal registered by one side must count as a goal scored by the other side; So, if Breno plays against César, and Breno's side scores an own goal, the player registered must be from Breno's side, but the goal must count towards César's side.<br>
+>BR06 - A player cannot both score and assist the same goal<br>
 
 
 ### Functional Requirements
