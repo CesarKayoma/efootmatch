@@ -10,8 +10,4 @@ class Team(BaseModel):
         unique=True
     )
 
-    team_id = db.Column(
-        db.Integer,
-        db.ForeignKey("teams.id"),
-        nullable=False
-    )
+    players = db.relationship("Player", back_populates="team")

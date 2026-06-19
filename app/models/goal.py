@@ -6,22 +6,24 @@ class Goal(BaseModel):
 
     own_goal = db.Column(
         db.Boolean,
-        defalut=False
+        default=False
     )
 
     scorer_id = db.Column(
-        id.Integer,
+        db.Integer,
         db.ForeignKey("players.id"),
         nullable=False
     )
 
     assister_id = db.Column(
-        id.Integer,
+        db.Integer,
         db.ForeignKey("players.id")
     )
 
     match_id = db.Column(
-        id.Integer,
+        db.Integer,
         db.ForeignKey("matches.id"),
         nullable=False
     )
+
+    player = db.relationship("Player", back_populates="goals")

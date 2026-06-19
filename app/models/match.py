@@ -9,3 +9,5 @@ class Match(BaseModel):
         db.ForeignKey("players.id"),
         nullable=False
     )
+
+    player = db.relationship("Player", backref="matches")
