@@ -15,6 +15,12 @@ class Player(BaseModel):
         nullable=False,
     )
 
-    matches = db.relationship("Match", back_populates="player")
+    __table_args__ = (
+        db.UniqueConstraint("name", "team_id", name="unique_player_name_team"),
+    )
+
+    motm_matches = db.relationship("Match", back_populates="motm_player")
     team = db.relationship("Team", back_populates="players")
-    goals = db.relationship("Goal", back_populates="player")
+
+    scored_goals = db.relationship("Goal", foreign_keys="[Goal.scorer_id]", back_populates="scorer")
+    assisted_goals = db.relationship("Goal", foreign_keys="[Goal.assister_id]", back_populates="assister")

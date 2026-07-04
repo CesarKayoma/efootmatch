@@ -10,4 +10,4 @@ class Match(BaseModel):
         nullable=False
     )
 
-    player = db.relationship("Player", backref="matches")
+    motm_player = db.relationship("Player", back_populates="motm_matches")

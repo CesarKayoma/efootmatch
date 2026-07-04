@@ -26,4 +26,16 @@ class Goal(BaseModel):
         nullable=False
     )
 
-    player = db.relationship("Player", back_populates="goals")
+    __table_args__ = (
+        db.CheckConstraint(
+            "assister_id IS NULL OR scorer_id != assister_id",
+            name="check_scorer_is_not_assister"
+        ),
+    )
+
+    scorer = db.relationship(
+        "Player", foreign_keys=[scorer_id], back_populates="scored_goals"
+    )
+    assister = db.relationship(
+        "Player", foreign_keys=[assister_id], back_populates="assisted_goals"
+    )
