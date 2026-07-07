@@ -39,3 +39,5 @@ class Goal(BaseModel):
     assister = db.relationship(
         "Player", foreign_keys=[assister_id], back_populates="assisted_goals"
     )
+
+    match = db.relationship("Match", back_populates="match_goals")

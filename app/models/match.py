@@ -11,3 +11,5 @@ class Match(BaseModel):
     )
 
     motm_player = db.relationship("Player", back_populates="motm_matches")
+
+    match_goals = db.relationship("Goal", back_populates="match")
