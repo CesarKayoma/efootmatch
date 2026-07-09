@@ -3,7 +3,7 @@
 ><br>
 > they should also have `db.relationship()` attributes when convenient, using `back_populates` when appropriate<br>
 
-- [ ] Set up PostgreSQL and database migrations<br>
+- [X] Set up PostgreSQL and database migrations<br>
 > replace the local SQLite URI with a local PostgreSQL connection, installing the required driver<br>
 ><br>
 > configure Flask-Migrate/Alembic instead of relying on `db.create_all()`<br>
