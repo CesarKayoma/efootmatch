@@ -14,4 +14,14 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db)
 
+    from app.routes.home import bp as home_bp
+    from app.routes.matches import bp as matches_bp
+    from app.routes.teams import bp as teams_bp
+    from app.routes.players import bp as players_bp
+
+    app.register_blueprint(home_bp)
+    app.register_blueprint(matches_bp, url_prefix="/matches")
+    app.register_blueprint(teams_bp, url_prefix="/teams")
+    app.register_blueprint(players_bp, url_prefix="/players")
+
     return app

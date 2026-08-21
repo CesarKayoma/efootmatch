@@ -1,5 +1,7 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from flask_login import login_required
+from flask import Blueprint, render_template
 
-from app.forms.team import TeamForm
+bp = Blueprint("teams", __name__)
 
+@bp.route("/")
+def home():
+    return render_template("teams/index.html")
