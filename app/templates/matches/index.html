@@ -2,10 +2,13 @@
 
 {% block content %}
 
-<div>
+<div class="content">
     <p>Página de Partidas</p>
     <p>Aqui tem o todas as partidas que nos ja jogamos</p>
     <p>As well as a button that allows you to register a new match</p>
+</div>
+<div>
+    {% for m in matches %}
 </div>
 
 {% endblock %}
