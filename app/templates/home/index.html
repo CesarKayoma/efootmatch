@@ -2,9 +2,121 @@
 
 {% block content %}
 
-<div class="content">
-    <p>Página Inicial do Dashboard</p>
-    <p>Aqui tem o dashboard principal dos X1 pro Brenolete ver</p>
+<div class="dashboard-page">
+
+    <div class="dashboard-header">
+        <h1>Dashboard</h1>
+        <p>Estatísticas gerais dos confrontos César x Breno</p>
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stat-card highlight">
+            <span class="stat-value">{{ stats.cesar_wins }}</span>
+            <span class="stat-label">Vitórias · César</span>
+        </div>
+        
+        <div class="stat-card">
+            <span class="stat-value">{{ stats.draws }}</span>
+            <span class="stat-label">Empates</span>
+        </div>
+
+
+        <div class="stat-card highlight">
+            <span class="stat-value">{{ stats.breno_wins }}</span>
+            <span class="stat-label">Vitórias · Breno</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-value">{{ stats.cesar_goals }}</span>
+            <span class="stat-label">Gols · César</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-value">{{ stats.total_matches }}</span>
+            <span class="stat-label">Partidas</span>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-value">{{ stats.breno_goals }}</span>
+            <span class="stat-label">Gols · Breno</span>
+        </div>
+
+    </div>
+
+
+    <div class="charts-grid">
+
+        <div class="chart-card">
+            <h3>Artilharia</h3>
+            <canvas id="chart-scorers"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>Assistentes</h3>
+            <canvas id="chart-assisters"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>Man of the Match</h3>
+            <canvas id="chart-motm"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <h3>Participações em Gol</h3>
+            <canvas id="chart-participations"></canvas>
+        </div>
+
+    </div>
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+(function () {
+    const CESAR_COLOR = "#121479";
+    const BRENO_COLOR = "#8fd18a";
+
+    function renderLeaderboardChart(canvasId, data) {
+        const labels = data.map((d) => `${d.player_name} (${d.team_name})`);
+        const cesarData = data.map((d) => (d.team_name === "César" ? d.value : null));
+        const brenoData = data.map((d) => (d.team_name === "Breno" ? d.value : null));
+
+        new Chart(document.getElementById(canvasId), {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: "César",
+                        data: cesarData,
+                        backgroundColor: CESAR_COLOR,
+                    },
+                    {
+                        label: "Breno",
+                        data: brenoData,
+                        backgroundColor: BRENO_COLOR,
+                    },
+                ],
+            },
+            options: {
+                indexAxis: "y",
+                responsive: true,
+                plugins: {
+                    legend: { position: "top" },
+                },
+                scales: {
+                    x: { beginAtZero: true },
+                },
+            },
+        });
+    }
+
+    renderLeaderboardChart("chart-scorers", {{ leaderboard.top_scorers | tojson }});
+    renderLeaderboardChart("chart-assisters", {{ leaderboard.top_assisters | tojson }});
+    renderLeaderboardChart("chart-motm", {{ leaderboard.top_motm | tojson }});
+    renderLeaderboardChart("chart-participations", {{ leaderboard.top_participations | tojson }});
+})();
+</script>
 
 {% endblock %}

@@ -8,6 +8,11 @@ load_dotenv()
 
 def create_app():
     app = Flask(__name__)
+
+    app.json.ensure_ascii = False
+
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
+
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
     app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 

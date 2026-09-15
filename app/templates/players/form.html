@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="form-page">
+
+    <h1>{{ "Editar jogador" if player else "Cadastrar jogador" }}</h1>
+
+    <form method="POST" class="player-form" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="form-field">
+            {{ form.name.label }}
+            {{ form.name(class="text-input") }}
+        </div>
+
+        <div class="form-field">
+            <label>Time:</label>
+            <div class="radio-group">
+                {% for subfield in form.team_id %}
+                    <label>
+                        {{ subfield }} {{ subfield.label.text }}
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        {{ form.submit(class="register-button save-button") }}
+
+    </form>
+
+</div>
+
+{% endblock %}

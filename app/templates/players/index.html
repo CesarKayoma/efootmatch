@@ -2,10 +2,88 @@
 
 {% block content %}
 
-<div class="content">
-    <p>Página de Jogadores</p>
-    <p>Aqui tem todos os bagres do breno e bons do cesar</p>
-    <p>e deve ter mais tb</p>
+<div class="players-page">
+
+    <div class="players-header">
+        <h1>Jogadores</h1>
+        <a href="{{ url_for('players.new') }}" class="register-button">
+            + Cadastrar jogador
+        </a>
+    </div>
+
+    <div class="players-columns">
+
+        <!-- César -->
+        <div class="players-column">
+
+            <h2 class="players-column-title">{{ cesar_team.name }}</h2>
+
+            <div class="players-list">
+                {% for player in cesar_team.players|sort(attribute="name") %}
+
+                    <div class="player-row">
+
+                        <span class="player-name">{{ player.name }}</span>
+
+                        <div class="player-actions">
+
+                            <a href="{{ url_for('players.edit', player_id=player.id) }}">
+                                Editar
+                            </a>
+
+                            <form method="POST" action="{{ url_for('players.delete', player_id=player.id) }}"
+                                  onsubmit="return confirm('Excluir {{ player.name }}?');">
+                                <button type="submit">Excluir</button>
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                {% else %}
+                    <p class="players-empty">Nenhum jogador cadastrado.</p>
+                {% endfor %}
+            </div>
+
+        </div>
+
+
+        <!-- Breno -->
+        <div class="players-column">
+
+            <h2 class="players-column-title">{{ breno_team.name }}</h2>
+
+            <div class="players-list">
+                {% for player in breno_team.players|sort(attribute="name") %}
+
+                    <div class="player-row">
+
+                        <span class="player-name">{{ player.name }}</span>
+
+                        <div class="player-actions">
+
+                            <a href="{{ url_for('players.edit', player_id=player.id) }}">
+                                Editar
+                            </a>
+
+                            <form method="POST" action="{{ url_for('players.delete', player_id=player.id) }}"
+                                  onsubmit="return confirm('Excluir {{ player.name }}?');">
+                                <button type="submit">Excluir</button>
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                {% else %}
+                    <p class="players-empty">Nenhum jogador cadastrado.</p>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
 {% endblock %}

@@ -2,13 +2,144 @@
 
 {% block content %}
 
-<div class="content">
-    <p>Página de Partidas</p>
-    <p>Aqui tem o todas as partidas que nos ja jogamos</p>
-    <p>As well as a button that allows you to register a new match</p>
-</div>
-<div>
-    {% for m in matches %}
+<div class="matches-page">
+
+    <div class="matches-header">
+
+        <div>
+            <h1>Partidas</h1>
+        </div>
+
+        <a href="{{ url_for('matches.new') }}" class="register-button">
+            + Registrar partida
+        </a>
+
+    </div>
+
+
+    <div class="matches">
+
+        {% for m in matches %}
+
+            <div class="match">
+
+                <!-- Teams + Score -->
+                <div class="teams">
+
+                    <span class="home-team">
+                        {{ m.home_team.name }}
+                    </span>
+
+                    <span class="score">
+                        {{ m.home_score }} - {{ m.away_score }}
+                    </span>
+
+                    <span class="away-team">
+                        {{ m.away_team.name }}
+                    </span>
+
+                </div>
+
+
+                <!-- Match information -->
+                <div class="match-info">
+
+                    <span>
+                        {{ m.created_at.strftime("%d/%m/%Y") }}
+                    </span>
+
+                    <span class="motm">
+                        🏆 {{ m.motm_player.name }}
+                    </span>
+
+                </div>
+
+
+                <!-- Goals -->
+                {% if m.match_goals %}
+
+                    <div class="goals">
+
+                        <!-- Home team goals -->
+                        <div class="home-goals">
+
+                            {% for goal in m.match_goals %}
+
+                                {% if goal.team.id == m.home_team.id %}
+
+                                    <div class="goal">
+
+                                        <div class="goal-text">
+                                            <span class="scorer-name">{{ goal.scorer.name }}{% if goal.own_goal %} (OG){% endif %}</span>
+                                            {% if goal.assister %}
+                                                <span class="assist">{{ goal.assister.name }}</span>
+                                            {% endif %}
+                                        </div>
+
+                                        <span class="scorer-icon">⚽</span>
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+
+                        <!-- Away team goals -->
+                        <div class="away-goals">
+
+                            {% for goal in m.match_goals %}
+
+                                {% if goal.team.id == m.away_team.id %}
+
+                                    <div class="goal">
+
+                                        <span class="scorer-icon">⚽</span>
+
+                                        <div class="goal-text">
+                                            <span class="scorer-name">{{ goal.scorer.name }}{% if goal.own_goal %} (OG){% endif %}</span>
+                                            {% if goal.assister %}
+                                                <span class="assist">{{ goal.assister.name }}</span>
+                                            {% endif %}
+                                        </div>
+
+                                    </div>
+
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- Actions -->
+                <div class="match-actions">
+
+                    <a href="{{ url_for('matches.edit', match_id=m.id) }}">
+                        Editar
+                    </a>
+
+                    <form method="POST" action="{{ url_for('matches.delete', match_id=m.id) }}"
+                          onsubmit="return confirm('Excluir esta partida?');">
+                        <button type="submit">
+                            Excluir
+                        </button>
+                    </form>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
 </div>
 
 {% endblock %}

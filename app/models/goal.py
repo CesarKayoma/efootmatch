@@ -20,6 +20,12 @@ class Goal(BaseModel):
         db.ForeignKey("players.id")
     )
 
+    team_id = db.Column(
+        db.Integer,
+        db.ForeignKey("teams.id"),
+        nullable=False
+    )
+
     match_id = db.Column(
         db.Integer,
         db.ForeignKey("matches.id"),
@@ -41,3 +47,5 @@ class Goal(BaseModel):
     )
 
     match = db.relationship("Match", back_populates="match_goals")
+
+    team = db.relationship("Team")

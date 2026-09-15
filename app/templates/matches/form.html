@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="match-form-page">
+
+    <h1>{{ "Editar partida" if match else "Registrar partida" }}</h1>
+
+    <!-- Resumo ao vivo: placar + lista de gols já adicionados -->
+    <div class="match-summary">
+
+        <div class="teams">
+            <span class="home-team">{{ cesar_team.name }}</span>
+            <span class="score" id="score-display">0 - 0</span>
+            <span class="away-team">{{ breno_team.name }}</span>
+        </div>
+
+        <div class="goals" id="goals-summary">
+            <div class="home-goals" id="cesar-goals"></div>
+            <div class="away-goals" id="breno-goals"></div>
+        </div>
+
+    </div>
+
+    <hr class="divider">
+
+    <form method="POST" id="match-form" novalidate>
+        {{ form.csrf_token }}
+        {{ form.goals_json(id="goals_json") }}
+        {{ form.motm_player_id(id="motm-hidden") }}
+
+        <div class="goal-entry">
+
+            <div class="team-picker">
+                <label>
+                    <input type="radio" name="team-picker" value="cesar" id="team-cesar" checked>
+                    {{ cesar_team.name }}
+                </label>
+                <label>
+                    <input type="radio" name="team-picker" value="breno" id="team-breno">
+                    {{ breno_team.name }}
+                </label>
+            </div>
+
+            <div class="entry-fields">
+
+                <div class="combo-field">
+                    <label for="scorer-input">Goal:</label>
+                    <div class="combo">
+                        <input
+                            type="text"
+                            id="scorer-input"
+                            autocomplete="off"
+                            placeholder="Buscar jogador..."
+                            role="combobox"
+                            aria-expanded="false"
+                            aria-autocomplete="list"
+                        >
+                        <input type="hidden" id="scorer-hidden">
+                        <ul id="scorer-list" class="combo-list" role="listbox"></ul>
+                    </div>
+                </div>
+
+                <label class="own-goal-check">
+                    <input type="checkbox" id="own-goal-checkbox">
+                    Own Goal
+                </label>
+
+                <button type="button" id="add-goal-btn" class="add-goal-button">
+                    + Add goal
+                </button>
+
+            </div>
+
+            <div class="combo-field" id="assist-field">
+                <label for="assist-input">Assist:</label>
+                <div class="combo">
+                    <input
+                        type="text"
+                        id="assist-input"
+                        autocomplete="off"
+                        placeholder="Buscar jogador..."
+                        role="combobox"
+                        aria-expanded="false"
+                        aria-autocomplete="list"
+                    >
+                    <input type="hidden" id="assist-hidden">
+                    <ul id="assist-list" class="combo-list" role="listbox"></ul>
+                </div>
+            </div>
+
+        </div>
+
+        <hr class="divider">
+
+        <div class="combo-field motm-field">
+            <label for="motm-input">MOTM:</label>
+            <div class="combo">
+                <input
+                    type="text"
+                    id="motm-input"
+                    autocomplete="off"
+                    placeholder="Buscar jogador..."
+                    role="combobox"
+                    aria-expanded="false"
+                    aria-autocomplete="list"
+                >
+                <ul id="motm-list" class="combo-list" role="listbox"></ul>
+            </div>
+        </div>
+
+        {{ form.submit(class="register-button save-button") }}
+
+    </form>
+
+</div>
+
+<script>
+(function () {
+    const CESAR_TEAM = {{ cesar_team.id }};
+    const BRENO_TEAM = {{ breno_team.id }};
+
+    const playersByTeam = {{ players_by_team | tojson }};
+    const allPlayers = {{ all_players | tojson }};
+
+    let goals = {{ existing_goals | tojson }};
+
+    // =========================
+    // Combobox de busca reutilizável
+    // =========================
+    function createSearchableSelect({ inputEl, hiddenEl, listEl, options }) {
+        let currentOptions = options;
+        let filtered = options;
+        let highlighted = -1;
+
+        function renderList() {
+            listEl.innerHTML = "";
+
+            filtered.forEach((opt, index) => {
+                const li = document.createElement("li");
+                li.textContent = opt.name;
+                li.id = listEl.id + "-opt-" + index;
+                li.setAttribute("role", "option");
+                li.className = "combo-option" + (index === highlighted ? " active" : "");
+
+                li.addEventListener("mousedown", (e) => {
+                    e.preventDefault();
+                    selectOption(opt);
+                });
+
+                listEl.appendChild(li);
+            });
+
+            const isOpen = filtered.length > 0;
+            listEl.style.display = isOpen ? "block" : "none";
+            inputEl.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            inputEl.setAttribute(
+                "aria-activedescendant",
+                highlighted >= 0 ? listEl.id + "-opt-" + highlighted : ""
+            );
+        }
+
+        function selectOption(opt) {
+            inputEl.value = opt.name;
+            hiddenEl.value = opt.id;
+            listEl.style.display = "none";
+            inputEl.setAttribute("aria-expanded", "false");
+        }
+
+        function setOptions(newOptions) {
+            currentOptions = newOptions;
+            filtered = newOptions;
+            highlighted = -1;
+            inputEl.value = "";
+            hiddenEl.value = "";
+            listEl.style.display = "none";
+        }
+
+        function clear() {
+            inputEl.value = "";
+            hiddenEl.value = "";
+            listEl.style.display = "none";
+        }
+
+        inputEl.addEventListener("input", () => {
+            const query = inputEl.value.toLowerCase();
+            filtered = currentOptions.filter((o) => o.name.toLowerCase().includes(query));
+            highlighted = -1;
+            hiddenEl.value = "";
+            renderList();
+        });
+
+        inputEl.addEventListener("focus", () => {
+            filtered = currentOptions;
+            highlighted = -1;
+            renderList();
+        });
+
+        inputEl.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowDown") {
+                e.preventDefault();
+                highlighted = Math.min(highlighted + 1, filtered.length - 1);
+                renderList();
+            } else if (e.key === "ArrowUp") {
+                e.preventDefault();
+                highlighted = Math.max(highlighted - 1, 0);
+                renderList();
+            } else if (e.key === "Enter") {
+                e.preventDefault();
+                if (highlighted >= 0 && filtered[highlighted]) {
+                    selectOption(filtered[highlighted]);
+                }
+            } else if (e.key === "Escape") {
+                listEl.style.display = "none";
+                inputEl.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        // Se o usuário digitar o nome certinho e sair do campo sem clicar
+        // na sugestão (ou sem usar seta + Enter), seleciona automaticamente
+        // caso o texto bata exatamente com um jogador válido.
+        inputEl.addEventListener("blur", () => {
+            // Esconde a lista imediatamente, sempre — independente do
+            // que acontecer com o valor digitado abaixo.
+            listEl.style.display = "none";
+            inputEl.setAttribute("aria-expanded", "false");
+
+            setTimeout(() => {
+                if (hiddenEl.value) {
+                    return;
+                }
+
+                const typed = inputEl.value.trim().toLowerCase();
+
+                if (!typed) {
+                    return;
+                }
+
+                const exactMatch = currentOptions.find(
+                    (o) => o.name.toLowerCase() === typed
+                );
+
+                if (exactMatch) {
+                    selectOption(exactMatch);
+                } else {
+                    inputEl.value = "";
+                }
+            }, 150);
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!inputEl.contains(e.target) && !listEl.contains(e.target)) {
+                listEl.style.display = "none";
+                inputEl.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        return { setOptions, selectOption, clear };
+    }
+
+    const scorerCombo = createSearchableSelect({
+        inputEl: document.getElementById("scorer-input"),
+        hiddenEl: document.getElementById("scorer-hidden"),
+        listEl: document.getElementById("scorer-list"),
+        options: playersByTeam[CESAR_TEAM],
+    });
+
+    const assistCombo = createSearchableSelect({
+        inputEl: document.getElementById("assist-input"),
+        hiddenEl: document.getElementById("assist-hidden"),
+        listEl: document.getElementById("assist-list"),
+        options: playersByTeam[CESAR_TEAM],
+    });
+
+    const motmCombo = createSearchableSelect({
+        inputEl: document.getElementById("motm-input"),
+        hiddenEl: document.getElementById("motm-hidden"),
+        listEl: document.getElementById("motm-list"),
+        options: allPlayers,
+    });
+
+    {% if motm_player %}
+    motmCombo.selectOption({ id: {{ motm_player.id }}, name: {{ motm_player.name | tojson }} });
+    {% endif %}
+
+    // =========================
+    // Time selecionado -> filtra scorer/assist
+    // =========================
+    function updateComboOptionsForTeam(teamKey) {
+        const teamId = teamKey === "cesar" ? CESAR_TEAM : BRENO_TEAM;
+        scorerCombo.setOptions(playersByTeam[teamId]);
+        assistCombo.setOptions(playersByTeam[teamId]);
+    }
+
+    document.querySelectorAll('input[name="team-picker"]').forEach((radio) => {
+        radio.addEventListener("change", (e) => updateComboOptionsForTeam(e.target.value));
+    });
+
+    updateComboOptionsForTeam("cesar");
+
+    // =========================
+    // Own goal esconde/limpa a assistência
+    // =========================
+    const ownGoalCheckbox = document.getElementById("own-goal-checkbox");
+    const assistField = document.getElementById("assist-field");
+
+    function toggleAssistField() {
+        const isOwnGoal = ownGoalCheckbox.checked;
+        assistField.style.display = isOwnGoal ? "none" : "flex";
+        if (isOwnGoal) {
+            assistCombo.clear();
+        }
+    }
+
+    ownGoalCheckbox.addEventListener("change", toggleAssistField);
+
+    // =========================
+    // Enter em checkbox/radio não deve submeter o form sem querer
+    // (checkbox só alterna com Espaço; Enter, sem tratamento, cai no
+    // comportamento padrão do navegador de submeter via o botão de
+    // submit da página)
+    // =========================
+    document
+        .querySelectorAll('.goal-entry input[type="checkbox"], .goal-entry input[type="radio"]')
+        .forEach((el) => {
+            el.addEventListener("keydown", (e) => {
+                if (e.key !== "Enter") {
+                    return;
+                }
+
+                e.preventDefault();
+
+                if (el.type === "checkbox") {
+                    el.checked = !el.checked;
+                    el.dispatchEvent(new Event("change"));
+                }
+            });
+        });
+
+    // =========================
+    // Renderiza o placar + lista de gols
+    // =========================
+    function renderGoals() {
+        const cesarGoals = goals.filter((g) => g.team_id === CESAR_TEAM);
+        const brenoGoals = goals.filter((g) => g.team_id === BRENO_TEAM);
+
+        document.getElementById("score-display").textContent =
+            cesarGoals.length + " - " + brenoGoals.length;
+
+        const cesarContainer = document.getElementById("cesar-goals");
+        const brenoContainer = document.getElementById("breno-goals");
+
+        cesarContainer.innerHTML = "";
+        brenoContainer.innerHTML = "";
+
+        goals.forEach((goal, index) => {
+            const isHome = goal.team_id === CESAR_TEAM;
+            const container = isHome ? cesarContainer : brenoContainer;
+
+            const goalEl = document.createElement("div");
+            goalEl.className = "goal";
+
+            const textEl = document.createElement("div");
+            textEl.className = "goal-text";
+
+            const nameEl = document.createElement("span");
+            nameEl.className = "scorer-name";
+            nameEl.textContent = goal.scorer_name + (goal.own_goal ? " (OG)" : "");
+            textEl.appendChild(nameEl);
+
+            if (goal.assister_name) {
+                const assistEl = document.createElement("span");
+                assistEl.className = "assist";
+                assistEl.textContent = goal.assister_name;
+                textEl.appendChild(assistEl);
+            }
+
+            const iconEl = document.createElement("span");
+            iconEl.className = "scorer-icon";
+            iconEl.textContent = "⚽";
+
+            const removeEl = document.createElement("button");
+            removeEl.type = "button";
+            removeEl.className = "remove-goal-btn";
+            removeEl.textContent = "×";
+            removeEl.setAttribute("aria-label", "Remover gol");
+            removeEl.addEventListener("click", () => {
+                goals.splice(index, 1);
+                renderGoals();
+            });
+
+            if (isHome) {
+                goalEl.appendChild(removeEl);
+                goalEl.appendChild(textEl);
+                goalEl.appendChild(iconEl);
+            } else {
+                goalEl.appendChild(iconEl);
+                goalEl.appendChild(textEl);
+                goalEl.appendChild(removeEl);
+            }
+
+            container.appendChild(goalEl);
+        });
+    }
+
+    // =========================
+    // Adicionar gol
+    // =========================
+    document.getElementById("add-goal-btn").addEventListener("click", () => {
+        const scorerId = parseInt(document.getElementById("scorer-hidden").value, 10);
+
+        if (!scorerId) {
+            alert("Selecione o jogador que fez o gol.");
+            return;
+        }
+
+        const selectedTeam = document.querySelector('input[name="team-picker"]:checked').value;
+        const scorerTeamId = selectedTeam === "cesar" ? CESAR_TEAM : BRENO_TEAM;
+        const opponentTeamId = selectedTeam === "cesar" ? BRENO_TEAM : CESAR_TEAM;
+
+        const ownGoal = ownGoalCheckbox.checked;
+
+        const assisterHidden = document.getElementById("assist-hidden").value;
+        const assisterId = !ownGoal && assisterHidden ? parseInt(assisterHidden, 10) : null;
+        const assisterName = assisterId ? document.getElementById("assist-input").value : null;
+
+        if (assisterId && assisterId === scorerId) {
+            alert("O artilheiro não pode ser o mesmo jogador da assistência.");
+            return;
+        }
+
+        goals.push({
+            team_id: ownGoal ? opponentTeamId : scorerTeamId,
+            scorer_id: scorerId,
+            scorer_name: document.getElementById("scorer-input").value,
+            assister_id: assisterId,
+            assister_name: assisterName,
+            own_goal: ownGoal,
+        });
+
+        scorerCombo.clear();
+        assistCombo.clear();
+        ownGoalCheckbox.checked = false;
+        toggleAssistField();
+
+        renderGoals();
+    });
+
+    // =========================
+    // Envio final
+    // =========================
+    document.getElementById("match-form").addEventListener("submit", () => {
+        document.getElementById("goals_json").value = JSON.stringify(goals);
+    });
+
+    renderGoals();
+})();
+</script>
+
+{% endblock %}
