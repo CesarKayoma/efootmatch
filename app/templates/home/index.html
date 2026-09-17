@@ -117,11 +117,15 @@
                         label: "César",
                         data: cesarData,
                         backgroundColor: CESAR_COLOR,
+                        barThickness: 20,
+                        maxBarThickness: 20,
                     },
                     {
                         label: "Breno",
                         data: brenoData,
                         backgroundColor: BRENO_COLOR,
+                        barThickness: 20,
+                        maxBarThickness: 20,
                     },
                 ],
             },
@@ -131,8 +135,11 @@
                 plugins: {
                     legend: { position: "top" },
                 },
+                layout: {
+                    padding: { right: 24 },
+                },
                 scales: {
-                    x: { beginAtZero: true },
+                    x: { beginAtZero: true, grace: "10%" },
                 },
             },
             plugins: [valueLabelsPlugin],
