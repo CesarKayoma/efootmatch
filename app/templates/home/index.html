@@ -76,6 +76,32 @@
 (function () {
     const CESAR_COLOR = "#121479";
     const BRENO_COLOR = "#8fd18a";
+    const valueLabelsPlugin = {
+        id: "valueLabels",
+        afterDatasetsDraw(chart) {
+            const { ctx } = chart;
+
+            ctx.save();
+            ctx.font = "600 12px Arial";
+            ctx.fillStyle = "#121479";
+            ctx.textBaseline = "middle";
+
+            chart.data.datasets.forEach((dataset, datasetIndex) => {
+                const meta = chart.getDatasetMeta(datasetIndex);
+
+                meta.data.forEach((bar, index) => {
+                    const value = dataset.data[index];
+                    if (value === null || value === undefined) {
+                        return;
+                    }
+
+                    ctx.fillText(String(value), bar.x + 6, bar.y);
+                });
+            });
+
+            ctx.restore();
+        },
+    };
 
     function renderLeaderboardChart(canvasId, data) {
         const labels = data.map((d) => `${d.player_name} (${d.team_name})`);
@@ -109,6 +135,7 @@
                     x: { beginAtZero: true },
                 },
             },
+            plugins: [valueLabelsPlugin],
         });
     }
 
