@@ -1,9 +1,7 @@
-from collections import Counter
-
-from sqlalchemy import select
+from sqlalchemy import case, func, or_, select
 
 from app.extensions import db
-from app.models import Match, Goal, Team
+from app.models import Goal, Match, Player, Team
 
 
 class MatchValidationError(Exception):
@@ -37,50 +35,49 @@ def list_matches(page=1, per_page=10):
 
 
 def get_dashboard_stats():
-    matches = Match.query.all()
-
-    total_matches = len(matches)
-
-    cesar_wins = 0
-    breno_wins = 0
-    draws = 0
-
-    cesar_goals = 0
-    breno_goals = 0
-
-    for match in matches:
-        home_score = sum(
-            1 for goal in match.match_goals
-            if goal.team_id == match.home_team_id
+    match_scores = (
+        select(
+            Match.id,
+            Team.name.label("home_team_name"),
+            func.sum(
+                case((Goal.team_id == Match.home_team_id, 1), else_=0)
+            ).label("home_score"),
+            func.sum(
+                case((Goal.team_id == Match.away_team_id, 1), else_=0)
+            ).label("away_score"),
         )
+        .join(Team, Team.id == Match.home_team_id)
+        .outerjoin(Goal, Goal.match_id == Match.id)
+        .group_by(Match.id, Team.name)
+        .subquery()
+    )
 
-        away_score = sum(
-            1 for goal in match.match_goals
-            if goal.team_id == match.away_team_id
+    cesar_score = case(
+        (match_scores.c.home_team_name == "César", match_scores.c.home_score),
+        else_=match_scores.c.away_score,
+    )
+    breno_score = case(
+        (match_scores.c.home_team_name == "César", match_scores.c.away_score),
+        else_=match_scores.c.home_score,
+    )
+    stats = db.session.execute(
+        select(
+            func.count(match_scores.c.id),
+            func.coalesce(func.sum(case((cesar_score > breno_score, 1), else_=0)), 0),
+            func.coalesce(func.sum(case((breno_score > cesar_score, 1), else_=0)), 0),
+            func.coalesce(func.sum(case((cesar_score == breno_score, 1), else_=0)), 0),
+            func.coalesce(func.sum(cesar_score), 0),
+            func.coalesce(func.sum(breno_score), 0),
         )
-
-        if match.home_team.name == "César":
-            cesar_score, breno_score = home_score, away_score
-        else:
-            cesar_score, breno_score = away_score, home_score
-
-        cesar_goals += cesar_score
-        breno_goals += breno_score
-
-        if cesar_score > breno_score:
-            cesar_wins += 1
-        elif breno_score > cesar_score:
-            breno_wins += 1
-        else:
-            draws += 1
+    ).one()
 
     return {
-        "total_matches": total_matches,
-        "cesar_wins": cesar_wins,
-        "breno_wins": breno_wins,
-        "cesar_goals": cesar_goals,
-        "breno_goals": breno_goals,
-        "draws": draws,
+        "total_matches": stats[0],
+        "cesar_wins": stats[1],
+        "breno_wins": stats[2],
+        "cesar_goals": stats[4],
+        "breno_goals": stats[5],
+        "draws": stats[3],
     }
 
 
@@ -91,49 +88,74 @@ def get_leaderboard_stats(limit=10):
 
     Gol contra não conta na artilharia pessoal do jogador nem nas participações.
     """
-    goals = Goal.query.all()
-    matches = Match.query.all()
-
-    scorer_counts = Counter()
-    assister_counts = Counter()
-    participation_counts = Counter()
-    motm_counts = Counter()
-
-    player_info = {}  # player_id -> (name, team_name)
-
-    for goal in goals:
-        if not goal.own_goal:
-            scorer_counts[goal.scorer_id] += 1
-            participation_counts[goal.scorer_id] += 1
-            player_info[goal.scorer_id] = (goal.scorer.name, goal.scorer.team.name)
-
-        if goal.assister_id:
-            assister_counts[goal.assister_id] += 1
-            participation_counts[goal.assister_id] += 1
-            player_info[goal.assister_id] = (goal.assister.name, goal.assister.team.name)
-
-    for match in matches:
-        motm_id = match.man_of_the_match
-        motm_counts[motm_id] += 1
-        player_info.setdefault(
-            motm_id, (match.motm_player.name, match.motm_player.team.name)
-        )
-
-    def build_ranking(counter):
+    def ranking(query):
         return [
             {
-                "player_name": player_info[player_id][0],
-                "team_name": player_info[player_id][1],
+                "player_name": player_name,
+                "team_name": team_name,
                 "value": value,
             }
-            for player_id, value in counter.most_common(limit)
+            for player_name, team_name, value in db.session.execute(
+                query.order_by(db.desc("value"), Player.id).limit(limit)
+            )
         ]
 
+    scorer_query = (
+        select(
+            Player.name,
+            Team.name,
+            func.count(Goal.id).label("value"),
+        )
+        .join(Goal, Goal.scorer_id == Player.id)
+        .join(Team, Team.id == Player.team_id)
+        .where(or_(Goal.own_goal.is_(False), Goal.own_goal.is_(None)))
+        .group_by(Player.id, Player.name, Team.name)
+    )
+    assister_query = (
+        select(
+            Player.name,
+            Team.name,
+            func.count(Goal.id).label("value"),
+        )
+        .join(Goal, Goal.assister_id == Player.id)
+        .join(Team, Team.id == Player.team_id)
+        .group_by(Player.id, Player.name, Team.name)
+    )
+    motm_query = (
+        select(
+            Player.name,
+            Team.name,
+            func.count(Match.id).label("value"),
+        )
+        .join(Match, Match.man_of_the_match == Player.id)
+        .join(Team, Team.id == Player.team_id)
+        .group_by(Player.id, Player.name, Team.name)
+    )
+    participation_query = (
+        select(
+            Player.name,
+            Team.name,
+            func.count(Goal.id).label("value"),
+        )
+        .join(
+            Goal,
+            (Goal.scorer_id == Player.id)
+            | (Goal.assister_id == Player.id),
+        )
+        .join(Team, Team.id == Player.team_id)
+        .where(
+            (Goal.assister_id == Player.id)
+            | ((Goal.scorer_id == Player.id)
+               & or_(Goal.own_goal.is_(False), Goal.own_goal.is_(None)))
+        )
+        .group_by(Player.id, Player.name, Team.name)
+    )
+
     return {
-        "top_scorers": build_ranking(scorer_counts),
-        "top_assisters": build_ranking(assister_counts),
-        "top_motm": build_ranking(motm_counts),
-        "top_participations": build_ranking(participation_counts),
+        "top_scorers": ranking(scorer_query),
+        "top_assisters": ranking(assister_query),
+        "top_motm": ranking(motm_query),
+        "top_participations": ranking(participation_query),
     }
 
 
