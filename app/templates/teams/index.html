@@ -2,9 +2,38 @@
 
 {% block content %}
 
-<div class="content">
-    <span class="home-team">César</span>
-    <span class="home-team">Breno</span>
+<div class="teams-page">
+    <div class="teams-header">
+        <div>
+            <h1>Times</h1>
+            <p>Jogadores cadastrados em cada time.</p>
+        </div>
+    </div>
+
+    <div class="teams-grid">
+        {% for team in teams %}
+            <section class="team-card" aria-labelledby="team-{{ team.id }}">
+                <div class="team-card-header">
+                    <h2 id="team-{{ team.id }}">{{ team.name }}</h2>
+                    <span class="team-player-count">
+                        {{ team.players|length }} jogador{% if team.players|length != 1 %}es{% endif %}
+                    </span>
+                </div>
+
+                {% if team.players %}
+                    <ul class="team-player-list">
+                        {% for player in team.players|sort(attribute="name") %}
+                            <li>{{ player.name }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="teams-empty">Nenhum jogador cadastrado.</p>
+                {% endif %}
+            </section>
+        {% else %}
+            <p class="teams-empty teams-empty-page">Nenhum time cadastrado.</p>
+        {% endfor %}
+    </div>
 </div>
 
 {% endblock %}

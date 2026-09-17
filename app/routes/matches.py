@@ -1,7 +1,9 @@
 import json
 
 from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask_login import login_required
 
+from app.auth import admin_required
 from app.forms.match import MatchForm
 from app.services import match_service
 
@@ -9,12 +11,18 @@ bp = Blueprint("matches", __name__)
 
 
 @bp.route("/")
+@login_required
 def home():
-    matches = match_service.list_matches()
+    page = request.args.get("page", 1, type=int)
+    per_page = min(request.args.get("per_page", 10, type=int), 50)
+    page = max(page, 1)
+    per_page = max(per_page, 1)
+    matches = match_service.list_matches(page=page, per_page=per_page)
     return render_template("matches/index.html", matches=matches)
 
 
 @bp.route("/new", methods=["GET", "POST"])
+@admin_required
 def new():
     form = MatchForm()
     context = match_service.get_form_context()
@@ -45,6 +53,7 @@ def new():
 
 
 @bp.route("/<int:match_id>/edit", methods=["GET", "POST"])
+@admin_required
 def edit(match_id):
     match = match_service.get_match_or_404(match_id)
     form = MatchForm()
@@ -92,6 +101,7 @@ def edit(match_id):
 
 
 @bp.route("/<int:match_id>/delete", methods=["POST"])
+@admin_required
 def delete(match_id):
     match_service.delete_match(match_id)
     flash("Partida excluída.", "success")

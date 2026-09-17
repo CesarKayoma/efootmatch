@@ -6,9 +6,11 @@
 
     <div class="players-header">
         <h1>Jogadores</h1>
-        <a href="{{ url_for('players.new') }}" class="register-button">
-            + Cadastrar jogador
-        </a>
+        {% if current_user.is_admin %}
+            <a href="{{ url_for('players.new') }}" class="register-button">
+                + Cadastrar jogador
+            </a>
+        {% endif %}
     </div>
 
     <div class="players-columns">
@@ -18,13 +20,14 @@
 
             <h2 class="players-column-title">{{ cesar_team.name }}</h2>
 
-            <div class="players-list">
+            <div class="players-list" data-player-list>
                 {% for player in cesar_team.players|sort(attribute="name") %}
 
                     <div class="player-row">
 
                         <span class="player-name">{{ player.name }}</span>
 
+                        {% if current_user.is_admin %}
                         <div class="player-actions">
 
                             <a href="{{ url_for('players.edit', player_id=player.id) }}">
@@ -33,10 +36,12 @@
 
                             <form method="POST" action="{{ url_for('players.delete', player_id=player.id) }}"
                                   onsubmit="return confirm('Excluir {{ player.name }}?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit">Excluir</button>
                             </form>
 
                         </div>
+                        {% endif %}
 
                     </div>
 
@@ -44,6 +49,9 @@
                     <p class="players-empty">Nenhum jogador cadastrado.</p>
                 {% endfor %}
             </div>
+            {% if cesar_team.players %}
+                <nav class="player-pagination" data-player-pagination aria-label="Paginação dos jogadores de {{ cesar_team.name }}"></nav>
+            {% endif %}
 
         </div>
 
@@ -53,13 +61,14 @@
 
             <h2 class="players-column-title">{{ breno_team.name }}</h2>
 
-            <div class="players-list">
+            <div class="players-list" data-player-list>
                 {% for player in breno_team.players|sort(attribute="name") %}
 
                     <div class="player-row">
 
                         <span class="player-name">{{ player.name }}</span>
 
+                        {% if current_user.is_admin %}
                         <div class="player-actions">
 
                             <a href="{{ url_for('players.edit', player_id=player.id) }}">
@@ -68,10 +77,12 @@
 
                             <form method="POST" action="{{ url_for('players.delete', player_id=player.id) }}"
                                   onsubmit="return confirm('Excluir {{ player.name }}?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit">Excluir</button>
                             </form>
 
                         </div>
+                        {% endif %}
 
                     </div>
 
@@ -79,11 +90,80 @@
                     <p class="players-empty">Nenhum jogador cadastrado.</p>
                 {% endfor %}
             </div>
+            {% if breno_team.players %}
+                <nav class="player-pagination" data-player-pagination aria-label="Paginação dos jogadores de {{ breno_team.name }}"></nav>
+            {% endif %}
 
         </div>
 
     </div>
 
 </div>
+
+<script>
+(function () {
+    const pageSize = 8;
+
+    document.querySelectorAll("[data-player-list]").forEach((list) => {
+        const rows = Array.from(list.querySelectorAll(".player-row"));
+        const pagination = list.parentElement.querySelector("[data-player-pagination]");
+        const pageCount = Math.ceil(rows.length / pageSize);
+
+        if (!pagination || pageCount <= 1) {
+            return;
+        }
+
+        let currentPage = 1;
+
+        function render() {
+            rows.forEach((row, index) => {
+                const firstVisible = (currentPage - 1) * pageSize;
+                row.hidden = index < firstVisible || index >= firstVisible + pageSize;
+            });
+
+            pagination.innerHTML = "";
+
+            const previous = document.createElement("button");
+            previous.type = "button";
+            previous.textContent = "<";
+            previous.setAttribute("aria-label", "Página anterior");
+            previous.disabled = currentPage === 1;
+            previous.addEventListener("click", () => {
+                currentPage -= 1;
+                render();
+            });
+            pagination.appendChild(previous);
+
+            for (let page = 1; page <= pageCount; page += 1) {
+                const pageButton = document.createElement("button");
+                pageButton.type = "button";
+                pageButton.textContent = page;
+                pageButton.setAttribute("aria-label", `Página ${page}`);
+                if (page === currentPage) {
+                    pageButton.setAttribute("aria-current", "page");
+                }
+                pageButton.addEventListener("click", () => {
+                    currentPage = page;
+                    render();
+                });
+                pagination.appendChild(pageButton);
+            }
+
+            const next = document.createElement("button");
+            next.type = "button";
+            next.textContent = ">";
+            next.setAttribute("aria-label", "Próxima página");
+            next.disabled = currentPage === pageCount;
+            next.addEventListener("click", () => {
+                currentPage += 1;
+                render();
+            });
+            pagination.appendChild(next);
+        }
+
+        render();
+    });
+})();
+</script>
 
 {% endblock %}

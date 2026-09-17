@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - eFootMatch</title>
+    <style>
+        body { align-items: center; background: #f5f8f4; display: flex; font-family: Arial, sans-serif; justify-content: center; min-height: 100vh; }
+        main { background: white; border: 1px solid #e2e7e2; border-radius: 14px; box-shadow: 0 5px 16px rgba(0, 0, 0, .08); padding: 32px; width: min(90%, 360px); }
+        h1 { color: #121479; margin-top: 0; }
+        label { display: block; font-weight: 600; margin: 16px 0 6px; }
+        input { border: 1px solid #bbc4bb; border-radius: 8px; box-sizing: border-box; font-size: 15px; padding: 11px; width: 100%; }
+        button { background: #121479; border: 0; border-radius: 8px; color: white; cursor: pointer; font-size: 15px; margin-top: 22px; padding: 12px; width: 100%; }
+        .error { color: #a11d1d; font-size: 13px; margin: 8px 0; }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>eFootMatch</h1>
+        <form method="post">
+            {{ form.hidden_tag() }}
+            {{ form.email.label }}
+            {{ form.email(autocomplete="email") }}
+            {% for error in form.email.errors %}<div class="error">{{ error }}</div>{% endfor %}
+            {{ form.password.label }}
+            {{ form.password(autocomplete="current-password") }}
+            {% for error in form.password.errors %}<div class="error">{{ error }}</div>{% endfor %}
+            {{ form.submit() }}
+        </form>
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+            <div class="error">{{ message }}</div>
+        {% endfor %}
+    </main>
+</body>
+</html>

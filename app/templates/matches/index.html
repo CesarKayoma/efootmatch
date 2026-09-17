@@ -10,16 +10,18 @@
             <h1>Partidas</h1>
         </div>
 
-        <a href="{{ url_for('matches.new') }}" class="register-button">
-            + Registrar partida
-        </a>
+        {% if current_user.is_admin %}
+            <a href="{{ url_for('matches.new') }}" class="register-button">
+                + Registrar partida
+            </a>
+        {% endif %}
 
     </div>
 
 
     <div class="matches">
 
-        {% for m in matches %}
+        {% for m in matches.items %}
 
             <div class="match">
 
@@ -119,26 +121,35 @@
 
 
                 <!-- Actions -->
-                <div class="match-actions">
-
-                    <a href="{{ url_for('matches.edit', match_id=m.id) }}">
-                        Editar
-                    </a>
-
-                    <form method="POST" action="{{ url_for('matches.delete', match_id=m.id) }}"
-                          onsubmit="return confirm('Excluir esta partida?');">
-                        <button type="submit">
-                            Excluir
-                        </button>
-                    </form>
-
-                </div>
+                {% if current_user.is_admin %}
+                    <div class="match-actions">
+                        <a href="{{ url_for('matches.edit', match_id=m.id) }}">Editar</a>
+                        <form method="POST" action="{{ url_for('matches.delete', match_id=m.id) }}"
+                              onsubmit="return confirm('Excluir esta partida?');">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit">Excluir</button>
+                        </form>
+                    </div>
+                {% endif %}
 
             </div>
 
+        {% else %}
+            <p class="matches-empty">Nenhuma partida registrada ainda.</p>
         {% endfor %}
 
     </div>
+    {% if matches.pages > 1 %}
+        <nav class="pagination" aria-label="Paginação de partidas">
+            {% if matches.has_prev %}
+                <a href="{{ url_for('matches.home', page=matches.prev_num, per_page=matches.per_page) }}">Anterior</a>
+            {% endif %}
+            <span>Página {{ matches.page }} de {{ matches.pages }}</span>
+            {% if matches.has_next %}
+                <a href="{{ url_for('matches.home', page=matches.next_num, per_page=matches.per_page) }}">Próxima</a>
+            {% endif %}
+        </nav>
+    {% endif %}
 
 </div>
 

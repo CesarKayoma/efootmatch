@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,12 +38,14 @@
         }
 
         body {
+            background-color: #f7faf7;
             font-family: var(--default-font-family);
             margin: 0;
             padding: 0;
         }
         .page {
             display: flex;
+            min-height: 100vh;
         }
 
         .navbar {
@@ -53,6 +55,7 @@
             background-color: #cfebcd;
             min-height: 100vh;
             width: 150px;
+            flex-shrink: 0;
         }
 
         .navbar a.navs {
@@ -76,6 +79,34 @@
 
         .navbar img:hover {
             transform: scale(1.02);
+        }
+
+        .nav-user {
+            border-top: 1px solid rgba(18, 20, 121, 0.15);
+            color: #555;
+            font-size: 11px;
+            margin-top: auto;
+            overflow: hidden;
+            padding: 16px 10px 8px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .nav-logout {
+            background: transparent;
+            border: 0;
+            color: #121479;
+            cursor: pointer;
+            font: inherit;
+            font-size: 12px;
+            padding: 8px 10px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .nav-logout:hover {
+            background-color: #c0ddbe;
+            border-radius: 10px;
         }
 
         .logo {
@@ -141,6 +172,44 @@
             display: flex;
             flex-direction: column;
             gap: 18px;
+        }
+
+        .matches-empty {
+            background-color: white;
+            border: 1px dashed #bbc4bb;
+            border-radius: 14px;
+            color: #666;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .pagination {
+            align-items: center;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 28px;
+        }
+
+        .pagination a {
+            border: 1px solid #121479;
+            border-radius: 8px;
+            color: #121479;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 9px 14px;
+            text-decoration: none;
+        }
+
+        .pagination a:hover,
+        .pagination a:focus-visible {
+            background-color: #121479;
+            color: white;
+        }
+
+        .pagination span {
+            color: #666;
+            font-size: 13px;
         }
 
 
@@ -595,6 +664,7 @@
             ========================= */
 
         .match-actions {
+            align-items: center;
             display: flex;
             justify-content: center;
             gap: 14px;
@@ -603,13 +673,22 @@
             border-top: 1px solid #eeeeee;
         }
 
+        .match-actions form {
+            display: flex;
+            margin: 0;
+        }
+
         .match-actions a,
         .match-actions button {
+            align-items: center;
             background: none;
             border: none;
+            display: inline-flex;
             font-size: 12px;
             font-weight: 600;
             color: #777;
+            line-height: 1.2;
+            padding: 0;
             text-decoration: none;
             cursor: pointer;
             font-family: inherit;
@@ -748,6 +827,10 @@
             border-bottom: 1px solid #f0f0f0;
         }
 
+        .player-row[hidden] {
+            display: none;
+        }
+
         .player-row:last-child {
             border-bottom: none;
         }
@@ -759,20 +842,65 @@
         }
 
         .player-actions {
+            align-items: center;
             display: flex;
             gap: 12px;
         }
 
+        .player-actions form {
+            display: flex;
+            margin: 0;
+        }
+
         .player-actions a,
         .player-actions button {
+            align-items: center;
             background: none;
             border: none;
+            display: inline-flex;
             font-size: 12px;
             font-weight: 600;
             color: #777;
+            line-height: 1.2;
+            padding: 0;
             text-decoration: none;
             cursor: pointer;
             font-family: inherit;
+        }
+
+        .player-pagination {
+            align-items: center;
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 18px;
+        }
+
+        .player-pagination button {
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            color: #121479;
+            cursor: pointer;
+            font: inherit;
+            font-size: 13px;
+            min-width: 30px;
+            padding: 7px 8px;
+        }
+
+        .player-pagination button:hover:not(:disabled),
+        .player-pagination button:focus-visible {
+            border-color: #121479;
+        }
+
+        .player-pagination button[aria-current="page"] {
+            background-color: #121479;
+            color: white;
+        }
+
+        .player-pagination button:disabled {
+            color: #aaa;
+            cursor: not-allowed;
         }
 
         .player-actions a:hover {
@@ -787,6 +915,94 @@
             color: #999;
             font-size: 14px;
             font-style: italic;
+        }
+
+        /* =========================
+            TEAMS PAGE
+            ========================= */
+
+        .teams-page {
+            max-width: 1100px;
+            padding: 30px 40px;
+            width: 100%;
+        }
+
+        .teams-header {
+            margin-bottom: 30px;
+        }
+
+        .teams-header h1 {
+            color: #121479;
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .teams-header p {
+            color: #666;
+            font-size: 14px;
+            margin: 6px 0 0;
+        }
+
+        .teams-grid {
+            display: grid;
+            gap: 24px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .team-card {
+            background-color: white;
+            border: 1px solid #e2e7e2;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            padding: 22px 24px;
+        }
+
+        .team-card-header {
+            align-items: center;
+            border-bottom: 1px solid #eeeeee;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+        }
+
+        .team-card h2 {
+            color: #121479;
+            font-size: 19px;
+            margin: 0;
+        }
+
+        .team-player-count {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .team-player-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .team-player-list li {
+            border-bottom: 1px solid #f0f0f0;
+            color: #222;
+            font-size: 14px;
+            padding: 10px 0;
+        }
+
+        .team-player-list li:last-child {
+            border-bottom: 0;
+        }
+
+        .teams-empty {
+            color: #999;
+            font-size: 14px;
+            font-style: italic;
+        }
+
+        .teams-empty-page {
+            grid-column: 1 / -1;
+            text-align: center;
         }
 
 
@@ -864,6 +1080,105 @@
             text-align: center;
         }
 
+        :focus-visible {
+            outline: 3px solid #8fd18a;
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 760px) {
+            .page {
+                display: block;
+            }
+
+            .navbar {
+                align-items: center;
+                flex-direction: row;
+                min-height: auto;
+                overflow-x: auto;
+                padding: 8px 12px;
+                width: 100%;
+            }
+
+            .navbar hr {
+                display: none;
+            }
+
+            .navbar .logo {
+                margin-right: 8px;
+                width: 110px;
+            }
+
+            .navbar a.navs {
+                flex-shrink: 0;
+                padding: 10px 12px;
+            }
+
+            .nav-user {
+                border-left: 1px solid rgba(18, 20, 121, 0.15);
+                border-top: 0;
+                margin: 0 0 0 auto;
+                max-width: 120px;
+                padding: 8px;
+            }
+
+            .nav-logout {
+                flex-shrink: 0;
+                width: auto;
+            }
+
+            .matches-page,
+            .players-page,
+            .teams-page,
+            .dashboard-page,
+            .match-form-page,
+            .form-page {
+                max-width: none;
+                padding: 24px 16px;
+            }
+
+            .matches-header,
+            .players-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .teams {
+                gap: 10px;
+            }
+
+            .home-team,
+            .away-team {
+                font-size: 15px;
+            }
+
+            .score {
+                font-size: 17px;
+                padding: 8px 10px;
+            }
+
+            .goals {
+                gap: 18px;
+            }
+
+            .players-columns,
+            .teams-grid,
+            .stats-grid,
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .entry-fields {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .combo,
+            .combo input[type="text"] {
+                width: 100%;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -916,6 +1231,13 @@
             <a href="{{ url_for('matches.home') }}" class="navs">Matches</a>
             <a href="{{ url_for('teams.home') }}" class="navs">Teams</a>
             <a href="{{ url_for('players.home') }}" class="navs">Players</a>
+            {% if current_user.is_authenticated %}
+                <div class="nav-user">{{ current_user.email }}</div>
+                <form method="POST" action="{{ url_for('auth.logout') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="nav-logout">Log out</button>
+                </form>
+            {% endif %}
         </div>
         {% block content %}
         {% endblock %}

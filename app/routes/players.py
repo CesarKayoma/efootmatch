@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask_login import login_required
 
+from app.auth import admin_required
 from app.forms.player import PlayerForm
 from app.services import player_service
 
@@ -7,6 +9,7 @@ bp = Blueprint("players", __name__)
 
 
 @bp.route("/")
+@login_required
 def home():
     cesar_team, breno_team = player_service.list_players_by_team()
     return render_template(
@@ -17,6 +20,7 @@ def home():
 
 
 @bp.route("/new", methods=["GET", "POST"])
+@admin_required
 def new():
     form = PlayerForm()
 
@@ -32,6 +36,7 @@ def new():
 
 
 @bp.route("/<int:player_id>/edit", methods=["GET", "POST"])
+@admin_required
 def edit(player_id):
     player = player_service.get_player_or_404(player_id)
     form = PlayerForm(player=player)
@@ -53,6 +58,7 @@ def edit(player_id):
 
 
 @bp.route("/<int:player_id>/delete", methods=["POST"])
+@admin_required
 def delete(player_id):
     try:
         player_service.delete_player(player_id)

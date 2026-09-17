@@ -1,5 +1,7 @@
 from collections import Counter
 
+from sqlalchemy import select
+
 from app.extensions import db
 from app.models import Match, Goal, Team
 
@@ -9,10 +11,15 @@ class MatchValidationError(Exception):
     pass
 
 
-def list_matches():
-    matches = Match.query.all()
+def list_matches(page=1, per_page=10):
+    pagination = db.paginate(
+        select(Match).order_by(Match.created_at.desc(), Match.id.desc()),
+        page=page,
+        per_page=per_page,
+        error_out=False,
+    )
 
-    for match in matches:
+    for match in pagination.items:
         home_score = sum(
             1 for goal in match.match_goals
             if goal.team_id == match.home_team_id
@@ -26,7 +33,7 @@ def list_matches():
         match.home_score = home_score
         match.away_score = away_score
 
-    return matches
+    return pagination
 
 
 def get_dashboard_stats():

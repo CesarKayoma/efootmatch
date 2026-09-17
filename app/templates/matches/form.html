@@ -55,6 +55,7 @@
                             role="combobox"
                             aria-expanded="false"
                             aria-autocomplete="list"
+                            aria-controls="scorer-list"
                         >
                         <input type="hidden" id="scorer-hidden">
                         <ul id="scorer-list" class="combo-list" role="listbox"></ul>
@@ -72,7 +73,7 @@
 
             </div>
 
-            <div class="combo-field" id="assist-field">
+            <div class="combo-field" id="assist-field" aria-live="polite">
                 <label for="assist-input">Assist:</label>
                 <div class="combo">
                     <input
@@ -83,6 +84,7 @@
                         role="combobox"
                         aria-expanded="false"
                         aria-autocomplete="list"
+                        aria-controls="assist-list"
                     >
                     <input type="hidden" id="assist-hidden">
                     <ul id="assist-list" class="combo-list" role="listbox"></ul>
@@ -104,6 +106,7 @@
                     role="combobox"
                     aria-expanded="false"
                     aria-autocomplete="list"
+                    aria-controls="motm-list"
                 >
                 <ul id="motm-list" class="combo-list" role="listbox"></ul>
             </div>
