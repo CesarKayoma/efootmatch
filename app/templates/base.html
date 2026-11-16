@@ -78,32 +78,86 @@
             transform: scale(1.02);
         }
 
+        .nav-profile {
+            align-items: center;
+            background: #fff;
+            border: 1px solid rgba(18, 20, 121, 0.12);
+            border-radius: 14px;
+            bottom: 12px;
+            box-shadow: 0 5px 18px rgba(18, 20, 121, 0.12);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            left: 5px;
+            padding: 8px;
+            position: fixed;
+            width: 140px;
+            z-index: 1000;
+        }
+
         .nav-user {
-            border-top: 1px solid rgba(18, 20, 121, 0.15);
-            color: #555;
-            font-size: 11px;
-            margin-top: auto;
+            align-items: center;
+            color: #121479;
+            display: flex;
+            gap: 8px;
+            min-width: 0;
+            width: 100%;
+        }
+
+        .nav-user-avatar {
+            background: #f0f3fc;
+            border-radius: 50%;
+            flex: 0 0 34px;
+            height: 34px;
+            object-fit: contain;
+            padding: 4px;
+            width: 34px;
+        }
+
+        .nav-user-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .nav-user-name,
+        .nav-user-email {
             overflow: hidden;
-            padding: 16px 10px 8px;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
+        .nav-user-name {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .nav-user-email {
+            color: #69708b;
+            font-size: 10px;
+        }
+
+        .nav-profile form {
+            margin: 0;
+            width: 100%;
+        }
+
         .nav-logout {
-            background: transparent;
+            background: #f0f3fc;
             border: 0;
+            border-radius: 8px;
             color: #121479;
             cursor: pointer;
             font: inherit;
             font-size: 12px;
-            padding: 8px 10px;
-            text-align: left;
+            font-weight: 600;
+            padding: 7px 10px;
+            text-align: center;
             width: 100%;
         }
 
         .nav-logout:hover {
-            background-color: #c0ddbe;
-            border-radius: 10px;
+            background-color: #e2e8f8;
         }
 
         .logo {
@@ -2080,6 +2134,7 @@
         @media (max-width: 760px) {
             .page {
                 display: block;
+                padding-bottom: 92px;
             }
 
             .navbar {
@@ -2105,17 +2160,11 @@
                 padding: 10px 12px;
             }
 
-            .nav-user {
-                border-left: 1px solid rgba(18, 20, 121, 0.15);
-                border-top: 0;
-                margin: 0 0 0 auto;
-                max-width: 120px;
-                padding: 8px;
-            }
-
-            .nav-logout {
-                flex-shrink: 0;
-                width: auto;
+            .nav-profile {
+                bottom: 12px;
+                left: auto;
+                right: 12px;
+                width: min(220px, calc(100vw - 24px));
             }
 
             .matches-page,
@@ -2306,11 +2355,34 @@
             <a href="{{ url_for('teams.home') }}" class="navs">Times</a>
             <a href="{{ url_for('players.home') }}" class="navs">Jogadores</a>
             {% if current_user.is_authenticated %}
-                <div class="nav-user">{{ current_user.email }}</div>
-                <form method="POST" action="{{ url_for('auth.logout') }}">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="nav-logout">Sair</button>
-                </form>
+                {% set user_email = current_user.email|lower %}
+                {% if 'cesar' in user_email %}
+                    {% set user_name = 'César' %}
+                    {% set user_icon = 'team-cesar.png' %}
+                {% elif 'breno' in user_email %}
+                    {% set user_name = 'Breno' %}
+                    {% set user_icon = 'team-breno.png' %}
+                {% else %}
+                    {% set user_name = current_user.email.split('@')[0]|replace('.', ' ')|title %}
+                    {% set user_icon = 'player-icon.png' %}
+                {% endif %}
+                <section class="nav-profile" aria-label="Usuário conectado">
+                    <div class="nav-user">
+                        <img
+                            class="nav-user-avatar"
+                            src="{{ url_for('static', filename=user_icon) }}"
+                            alt="{{ user_name }}"
+                        >
+                        <div class="nav-user-info">
+                            <span class="nav-user-name">{{ user_name }}</span>
+                            <span class="nav-user-email" title="{{ current_user.email }}">{{ current_user.email }}</span>
+                        </div>
+                    </div>
+                    <form method="POST" action="{{ url_for('auth.logout') }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="nav-logout">Sair</button>
+                    </form>
+                </section>
             {% endif %}
         </div>
         {% block content %}
