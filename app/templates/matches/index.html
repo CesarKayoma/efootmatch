@@ -47,7 +47,7 @@
                 <div class="match-info">
 
                     <span>
-                        {{ m.created_at.strftime("%d/%m/%Y") }}
+                        {{ m.created_at|local_date }}
                     </span>
 
                     <span class="motm">

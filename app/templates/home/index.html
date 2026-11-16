@@ -1,156 +1,173 @@
 {% extends "base.html" %}
 
+{% macro ranking_card(title, entries) %}
+    <section class="ranking-card">
+        <h3>{{ title }}</h3>
+        {% if entries %}
+            {% set max_value = entries[0].value %}
+            <ol class="ranking-list">
+                {% for entry in entries %}
+                    <li class="ranking-item">
+                        <div class="ranking-meta">
+                            <span class="ranking-name">
+                                <span class="ranking-position">{{ loop.index }}</span>
+                                {{ entry.player_name }}
+                            </span>
+                            <span class="ranking-value">{{ entry.value }}</span>
+                        </div>
+                        <div class="ranking-team">{{ entry.team_name }}</div>
+                        <div class="ranking-track" aria-hidden="true">
+                            <span
+                                class="ranking-bar {{ 'team-cesar' if entry.team_name == 'César' else 'team-breno' }}"
+                                style="width: {{ (entry.value * 100 / max_value)|round(1) }}%">
+                            </span>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p class="dashboard-empty">Ainda não há dados para este ranking.</p>
+        {% endif %}
+    </section>
+{% endmacro %}
+
 {% block content %}
-
-<div class="dashboard-page">
-
-    <div class="dashboard-header">
-        <h1>Dashboard</h1>
-        <p>Estatísticas gerais dos confrontos César x Breno</p>
-    </div>
-
-    <div class="stats-grid">
-
-        <div class="stat-card highlight">
-            <span class="stat-value">{{ stats.cesar_wins }}</span>
-            <span class="stat-label">Vitórias · César</span>
+<main class="dashboard-page">
+    <header class="dashboard-header">
+        <div>
+            <span class="dashboard-eyebrow">EFOOTMATCH · CONFRONTO</span>
+            <h1>César <span>×</span> Breno</h1>
+            <p>
+                {% if selected_month %}
+                    Dados de {{ selected_month[5:7] }}/{{ selected_month[:4] }}.
+                {% else %}
+                    Resumo de todos os meses.
+                {% endif %}
+            </p>
         </div>
-        
-        <div class="stat-card">
-            <span class="stat-value">{{ stats.draws }}</span>
-            <span class="stat-label">Empates</span>
+        <div class="dashboard-header-tools">
+            <form class="dashboard-month-filter" method="get" action="{{ url_for('home.home') }}">
+                <label for="dashboard-month">Filtrar por mês</label>
+                <div class="month-filter-controls">
+                    <input
+                        id="dashboard-month"
+                        type="month"
+                        name="month"
+                        value="{{ selected_month }}"
+                    >
+                    <button type="submit">Aplicar</button>
+                    {% if selected_month %}
+                        <a href="{{ url_for('home.home') }}">Limpar</a>
+                    {% endif %}
+                </div>
+            </form>
+            <nav class="dashboard-actions" aria-label="Ações do dashboard">
+                <a class="dashboard-link" href="{{ url_for('matches.home') }}">Ver partidas</a>
+                {% if current_user.is_admin %}
+                    <a class="dashboard-link dashboard-link-primary" href="{{ url_for('matches.new') }}">
+                        Registrar partida
+                    </a>
+                {% endif %}
+            </nav>
         </div>
+    </header>
 
-
-        <div class="stat-card highlight">
-            <span class="stat-value">{{ stats.breno_wins }}</span>
-            <span class="stat-label">Vitórias · Breno</span>
+    <section class="dashboard-hero" aria-label="Histórico de vitórias">
+        <div class="dashboard-team dashboard-team-cesar">
+            <span class="team-badge">C</span>
+            <span>César</span>
         </div>
-
-        <div class="stat-card">
-            <span class="stat-value">{{ stats.cesar_goals }}</span>
-            <span class="stat-label">Gols · César</span>
+        <div class="dashboard-record">
+            <span class="dashboard-record-label">VITÓRIAS</span>
+            <div class="dashboard-record-score">
+                <strong>{{ stats.cesar_wins }}</strong>
+                <span>—</span>
+                <strong>{{ stats.breno_wins }}</strong>
+            </div>
+            <p>
+                {{ stats.draws }}
+                {% if stats.draws == 1 %}empate{% else %}empates{% endif %}
+                em {{ stats.total_matches }} partidas
+            </p>
         </div>
+        <div class="dashboard-team dashboard-team-breno">
+            <span class="team-badge">B</span>
+            <span>Breno</span>
+        </div>
+    </section>
 
-        <div class="stat-card">
-            <span class="stat-value">{{ stats.total_matches }}</span>
+    <section class="stats-grid" aria-label="Estatísticas gerais">
+        <article class="stat-card">
             <span class="stat-label">Partidas</span>
-        </div>
+            <strong class="stat-value">{{ stats.total_matches }}</strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-label">Gols no confronto</span>
+            <strong class="stat-value">{{ stats.cesar_goals + stats.breno_goals }}</strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-label">Gols por partida</span>
+            <strong class="stat-value">
+                {% if stats.total_matches %}
+                    {{ ((stats.cesar_goals + stats.breno_goals) / stats.total_matches)|round(1) }}
+                {% else %}
+                    —
+                {% endif %}
+            </strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-label">Empates</span>
+            <strong class="stat-value">{{ stats.draws }}</strong>
+        </article>
+    </section>
 
-        <div class="stat-card">
-            <span class="stat-value">{{ stats.breno_goals }}</span>
-            <span class="stat-label">Gols · Breno</span>
-        </div>
+    <div class="dashboard-content-grid">
+        <section class="dashboard-panel recent-panel" aria-labelledby="recent-matches-title">
+            <div class="panel-heading">
+                <div>
+                    <span class="dashboard-eyebrow">ATIVIDADE</span>
+                    <h2 id="recent-matches-title">Partidas recentes</h2>
+                </div>
+                <a href="{{ url_for('matches.home') }}">Histórico completo</a>
+            </div>
+            {% if recent_matches %}
+                <ol class="recent-match-list">
+                    {% for match in recent_matches %}
+                        <li class="recent-match">
+                            <time
+                                class="recent-date"
+                                datetime="{{ (match.created_at|local_datetime).isoformat() }}"
+                            >
+                                {{ match.created_at|local_date }}
+                            </time>
+                            <div class="recent-result">
+                                <span>{{ match.home_team.name }}</span>
+                                <strong>{{ match.home_score }} : {{ match.away_score }}</strong>
+                                <span>{{ match.away_team.name }}</span>
+                            </div>
+                            <span class="recent-motm">MOTM · {{ match.motm_player.name }}</span>
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% else %}
+                <p class="dashboard-empty">Nenhuma partida cadastrada ainda.</p>
+            {% endif %}
+        </section>
 
+        <section class="dashboard-panel rankings-panel" aria-labelledby="rankings-title">
+            <div class="panel-heading">
+                <div>
+                    <span class="dashboard-eyebrow">JOGADORES</span>
+                    <h2 id="rankings-title">Destaques individuais</h2>
+                </div>
+            </div>
+            <div class="ranking-grid">
+                {{ ranking_card("Artilharia", leaderboard.top_scorers) }}
+                {{ ranking_card("Assistências", leaderboard.top_assisters) }}
+                {{ ranking_card("Man of the Match", leaderboard.top_motm) }}
+                {{ ranking_card("Participações em gol", leaderboard.top_participations) }}
+            </div>
+        </section>
     </div>
-
-
-    <div class="charts-grid">
-
-        <div class="chart-card">
-            <h3>Artilharia</h3>
-            <canvas id="chart-scorers"></canvas>
-        </div>
-
-        <div class="chart-card">
-            <h3>Assistentes</h3>
-            <canvas id="chart-assisters"></canvas>
-        </div>
-
-        <div class="chart-card">
-            <h3>Man of the Match</h3>
-            <canvas id="chart-motm"></canvas>
-        </div>
-
-        <div class="chart-card">
-            <h3>Participações em Gol</h3>
-            <canvas id="chart-participations"></canvas>
-        </div>
-
-    </div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-(function () {
-    const CESAR_COLOR = "#121479";
-    const BRENO_COLOR = "#8fd18a";
-    const valueLabelsPlugin = {
-        id: "valueLabels",
-        afterDatasetsDraw(chart) {
-            const { ctx } = chart;
-
-            ctx.save();
-            ctx.font = "600 12px Arial";
-            ctx.fillStyle = "#121479";
-            ctx.textBaseline = "middle";
-
-            chart.data.datasets.forEach((dataset, datasetIndex) => {
-                const meta = chart.getDatasetMeta(datasetIndex);
-
-                meta.data.forEach((bar, index) => {
-                    const value = dataset.data[index];
-                    if (value === null || value === undefined) {
-                        return;
-                    }
-
-                    ctx.fillText(String(value), bar.x + 6, bar.y);
-                });
-            });
-
-            ctx.restore();
-        },
-    };
-
-    function renderLeaderboardChart(canvasId, data) {
-        const labels = data.map((d) => `${d.player_name} (${d.team_name})`);
-        const cesarData = data.map((d) => (d.team_name === "César" ? d.value : null));
-        const brenoData = data.map((d) => (d.team_name === "Breno" ? d.value : null));
-
-        new Chart(document.getElementById(canvasId), {
-            type: "bar",
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: "César",
-                        data: cesarData,
-                        backgroundColor: CESAR_COLOR,
-                        barThickness: 20,
-                        maxBarThickness: 20,
-                    },
-                    {
-                        label: "Breno",
-                        data: brenoData,
-                        backgroundColor: BRENO_COLOR,
-                        barThickness: 20,
-                        maxBarThickness: 20,
-                    },
-                ],
-            },
-            options: {
-                indexAxis: "y",
-                responsive: true,
-                plugins: {
-                    legend: { position: "top" },
-                },
-                layout: {
-                    padding: { right: 24 },
-                },
-                scales: {
-                    x: { beginAtZero: true, grace: "10%" },
-                },
-            },
-            plugins: [valueLabelsPlugin],
-        });
-    }
-
-    renderLeaderboardChart("chart-scorers", {{ leaderboard.top_scorers | tojson }});
-    renderLeaderboardChart("chart-assisters", {{ leaderboard.top_assisters | tojson }});
-    renderLeaderboardChart("chart-motm", {{ leaderboard.top_motm | tojson }});
-    renderLeaderboardChart("chart-participations", {{ leaderboard.top_participations | tojson }});
-})();
-</script>
-
+</main>
 {% endblock %}

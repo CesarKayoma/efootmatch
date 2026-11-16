@@ -34,4 +34,4 @@ Uma partida é criada e editada como uma unidade só: o form tem os gols (via `F
 
 #### Dashboard
 
-- `GET /dashboard` — visão geral com as principais estatísticas do sistema (FR06)
+- `GET /` — dashboard com estatísticas gerais, rankings e as cinco partidas mais recentes (FR06). Aceita `?month=AAAA-MM` para filtrar todos os indicadores por mês local. `created_at` é armazenado em UTC e convertido para `America/Sao_Paulo` na exibição e nos limites mensais.

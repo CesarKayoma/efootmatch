@@ -1,4 +1,5 @@
 from sqlalchemy import case, func, or_, select
+from sqlalchemy.orm import joinedload, selectinload
 
 from app.extensions import db
 from app.models import Goal, Match, Player, Team
@@ -9,33 +10,69 @@ class MatchValidationError(Exception):
     pass
 
 
+def _match_detail_options():
+    return (
+        joinedload(Match.home_team),
+        joinedload(Match.away_team),
+        joinedload(Match.motm_player),
+        selectinload(Match.match_goals).options(
+            joinedload(Goal.team),
+            joinedload(Goal.scorer),
+            joinedload(Goal.assister),
+        ),
+    )
+
+
+def _attach_match_scores(matches):
+    for match in matches:
+        match.home_score = sum(
+            1 for goal in match.match_goals
+            if goal.team_id == match.home_team_id
+        )
+        match.away_score = sum(
+            1 for goal in match.match_goals
+            if goal.team_id == match.away_team_id
+        )
+    return matches
+
+
+def _apply_match_period(query, start_at, end_at):
+    if start_at is not None:
+        query = query.where(Match.created_at >= start_at)
+    if end_at is not None:
+        query = query.where(Match.created_at < end_at)
+    return query
+
+
 def list_matches(page=1, per_page=10):
     pagination = db.paginate(
-        select(Match).order_by(Match.created_at.desc(), Match.id.desc()),
+        select(Match)
+        .options(*_match_detail_options())
+        .order_by(Match.created_at.desc(), Match.id.desc()),
         page=page,
         per_page=per_page,
         error_out=False,
     )
 
-    for match in pagination.items:
-        home_score = sum(
-            1 for goal in match.match_goals
-            if goal.team_id == match.home_team_id
-        )
-
-        away_score = sum(
-            1 for goal in match.match_goals
-            if goal.team_id == match.away_team_id
-        )
-
-        match.home_score = home_score
-        match.away_score = away_score
+    _attach_match_scores(pagination.items)
 
     return pagination
 
 
-def get_dashboard_stats():
-    match_scores = (
+def get_recent_matches(limit=5, start_at=None, end_at=None):
+    query = _apply_match_period(
+        select(Match)
+        .options(*_match_detail_options())
+        .order_by(Match.created_at.desc(), Match.id.desc()),
+        start_at,
+        end_at,
+    )
+    matches = db.session.scalars(query.limit(limit)).all()
+    return _attach_match_scores(matches)
+
+
+def get_dashboard_stats(start_at=None, end_at=None):
+    match_scores = _apply_match_period(
         select(
             Match.id,
             Team.name.label("home_team_name"),
@@ -47,10 +84,10 @@ def get_dashboard_stats():
             ).label("away_score"),
         )
         .join(Team, Team.id == Match.home_team_id)
-        .outerjoin(Goal, Goal.match_id == Match.id)
-        .group_by(Match.id, Team.name)
-        .subquery()
-    )
+        .outerjoin(Goal, Goal.match_id == Match.id),
+        start_at,
+        end_at,
+    ).group_by(Match.id, Team.name).subquery()
 
     cesar_score = case(
         (match_scores.c.home_team_name == "César", match_scores.c.home_score),
@@ -81,7 +118,7 @@ def get_dashboard_stats():
     }
 
 
-def get_leaderboard_stats(limit=10):
+def get_leaderboard_stats(limit=10, start_at=None, end_at=None):
     """
     Calcula os rankings de jogadores pro dashboard:
     artilharia, assistências, MOTM e participações em gol (gols + assistências).
@@ -107,6 +144,7 @@ def get_leaderboard_stats(limit=10):
             func.count(Goal.id).label("value"),
         )
         .join(Goal, Goal.scorer_id == Player.id)
+        .join(Match, Match.id == Goal.match_id)
         .join(Team, Team.id == Player.team_id)
         .where(or_(Goal.own_goal.is_(False), Goal.own_goal.is_(None)))
         .group_by(Player.id, Player.name, Team.name)
@@ -118,6 +156,7 @@ def get_leaderboard_stats(limit=10):
             func.count(Goal.id).label("value"),
         )
         .join(Goal, Goal.assister_id == Player.id)
+        .join(Match, Match.id == Goal.match_id)
         .join(Team, Team.id == Player.team_id)
         .group_by(Player.id, Player.name, Team.name)
     )
@@ -142,6 +181,7 @@ def get_leaderboard_stats(limit=10):
             (Goal.scorer_id == Player.id)
             | (Goal.assister_id == Player.id),
         )
+        .join(Match, Match.id == Goal.match_id)
         .join(Team, Team.id == Player.team_id)
         .where(
             (Goal.assister_id == Player.id)
@@ -149,6 +189,13 @@ def get_leaderboard_stats(limit=10):
                & or_(Goal.own_goal.is_(False), Goal.own_goal.is_(None)))
         )
         .group_by(Player.id, Player.name, Team.name)
+    )
+
+    scorer_query = _apply_match_period(scorer_query, start_at, end_at)
+    assister_query = _apply_match_period(assister_query, start_at, end_at)
+    motm_query = _apply_match_period(motm_query, start_at, end_at)
+    participation_query = _apply_match_period(
+        participation_query, start_at, end_at
     )
 
     return {

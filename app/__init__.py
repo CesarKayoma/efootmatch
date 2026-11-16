@@ -1,6 +1,7 @@
 from flask import Flask
 from app.models import Goal, Match, Player, Team, User
 from app.extensions import csrf, db, login_manager, migrate
+from app.time_utils import format_local_date, to_local_datetime
 from dotenv import load_dotenv
 import os
 
@@ -10,6 +11,8 @@ def create_app():
     app = Flask(__name__)
 
     app.json.ensure_ascii = False
+    app.add_template_filter(format_local_date, "local_date")
+    app.add_template_filter(to_local_datetime, "local_datetime")
 
     secret_key = os.environ.get("SECRET_KEY")
     if not secret_key:

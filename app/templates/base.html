@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='favicon-96x96.png') }} "sizes="96x96">
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
@@ -380,74 +377,368 @@
             ========================= */
 
         .dashboard-page {
-            padding: 30px 40px;
+            flex: 1;
+            padding: 36px clamp(20px, 4vw, 56px);
             width: 100%;
-            max-width: 1100px;
+            max-width: 1420px;
         }
 
         .dashboard-header {
-            margin-bottom: 30px;
+            align-items: flex-end;
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-header h1,
+        .panel-heading h2 {
+            margin: 0;
+            color: #121479;
         }
 
         .dashboard-header h1 {
-            margin: 0;
-            color: #121479;
-            font-size: 28px;
+            font-size: clamp(28px, 3vw, 38px);
+            letter-spacing: -1.5px;
+        }
+
+        .dashboard-header h1 span {
+            color: #8a94a6;
+            font-weight: 400;
         }
 
         .dashboard-header p {
-            margin: 6px 0 0;
+            margin: 8px 0 0;
             color: #666;
             font-size: 14px;
         }
 
+        .dashboard-eyebrow {
+            color: #687485;
+            display: block;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            margin-bottom: 7px;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            flex-shrink: 0;
+            gap: 10px;
+        }
+
+        .dashboard-header-tools {
+            align-items: flex-end;
+            display: flex;
+            gap: 16px;
+        }
+
+        .dashboard-month-filter {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .dashboard-month-filter label {
+            color: #687485;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .month-filter-controls {
+            align-items: center;
+            display: flex;
+            gap: 7px;
+        }
+
+        .month-filter-controls input {
+            background: white;
+            border: 1px solid #dfe5e1;
+            border-radius: 8px;
+            color: #20283a;
+            font: inherit;
+            font-size: 12px;
+            min-height: 40px;
+            padding: 0 9px;
+        }
+
+        .month-filter-controls button {
+            background: #e9f2e8;
+            border: 1px solid #d5e6d3;
+            border-radius: 8px;
+            color: #121479;
+            cursor: pointer;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            min-height: 40px;
+            padding: 0 12px;
+        }
+
+        .month-filter-controls button:hover {
+            background: #dcedda;
+        }
+
+        .month-filter-controls a {
+            color: #687485;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 2px;
+        }
+
+        .dashboard-link {
+            align-items: center;
+            border: 1px solid #dfe5e1;
+            border-radius: 9px;
+            color: #121479;
+            display: inline-flex;
+            font-size: 13px;
+            font-weight: 700;
+            min-height: 40px;
+            padding: 0 14px;
+            text-decoration: none;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .dashboard-link:hover {
+            background: #f0f4f1;
+            transform: translateY(-1px);
+        }
+
+        .dashboard-link-primary {
+            background: #121479;
+            border-color: #121479;
+            color: white;
+        }
+
+        .dashboard-link-primary:hover {
+            background: #22258e;
+        }
+
+        .dashboard-hero {
+            align-items: center;
+            background: linear-gradient(115deg, #fff 0%, #f0f6f1 100%);
+            border: 1px solid #e2e9e3;
+            border-radius: 18px;
+            box-shadow: 0 8px 24px rgba(18, 20, 121, 0.05);
+            display: grid;
+            gap: 20px;
+            grid-template-columns: minmax(0, 1fr) minmax(190px, 0.9fr) minmax(0, 1fr);
+            padding: 24px clamp(20px, 4vw, 48px);
+        }
+
+        .dashboard-team {
+            align-items: center;
+            color: #20283a;
+            display: flex;
+            font-size: 18px;
+            font-weight: 800;
+            gap: 12px;
+        }
+
+        .dashboard-team-breno {
+            justify-content: flex-end;
+        }
+
+        .team-badge {
+            align-items: center;
+            background: #121479;
+            border-radius: 13px;
+            color: white;
+            display: inline-flex;
+            font-size: 18px;
+            height: 48px;
+            justify-content: center;
+            width: 48px;
+        }
+
+        .dashboard-team-breno .team-badge {
+            background: #5da45a;
+        }
+
+        .dashboard-record {
+            text-align: center;
+        }
+
+        .dashboard-record-label {
+            color: #6b7480;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+        }
+
+        .dashboard-record-score {
+            align-items: center;
+            color: #121479;
+            display: flex;
+            font-size: 34px;
+            font-weight: 800;
+            gap: 16px;
+            justify-content: center;
+            line-height: 1.15;
+            margin: 5px 0;
+        }
+
+        .dashboard-record-score span {
+            color: #abb2bb;
+            font-size: 23px;
+            font-weight: 400;
+        }
+
+        .dashboard-record p {
+            color: #687485;
+            font-size: 12px;
+            margin: 0;
+        }
+
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 16px;
         }
 
         .stat-card {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-
-            background-color: white;
-            border: 1px solid #e2e7e2;
-            border-radius: 14px;
-            padding: 26px 20px;
-
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-
-            transition:
-                transform 0.2s ease,
-                box-shadow 0.2s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
-        }
-
-        .stat-card.highlight {
-            background-color: #cfebcd;
-            border-color: #cfebcd;
+            gap: 9px;
+            background: white;
+            border: 1px solid #e7ebe8;
+            border-radius: 12px;
+            min-height: 100px;
+            padding: 17px 19px;
         }
 
         .stat-value {
-            font-size: 32px;
-            font-weight: 800;
             color: #121479;
+            font-size: 27px;
+            font-weight: 800;
+            line-height: 1;
         }
 
         .stat-label {
-            font-size: 13px;
+            color: #687485;
+            font-size: 11px;
             font-weight: 600;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        }
+
+        .dashboard-content-grid {
+            align-items: start;
+            display: grid;
+            gap: 18px;
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            margin-top: 20px;
+        }
+
+        .dashboard-panel {
+            background: white;
+            border: 1px solid #e7ebe8;
+            border-radius: 14px;
+            min-width: 0;
+            padding: 20px;
+        }
+
+        .panel-heading {
+            align-items: center;
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            margin-bottom: 17px;
+        }
+
+        .panel-heading h2 {
+            font-size: 17px;
+            letter-spacing: -0.3px;
+        }
+
+        .panel-heading a {
+            color: #121479;
+            flex-shrink: 0;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .panel-heading a:hover {
+            text-decoration: underline;
+        }
+
+        .recent-match-list,
+        .ranking-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .recent-match {
+            align-items: center;
+            border-bottom: 1px solid #edf0ed;
+            display: grid;
+            gap: 10px;
+            grid-template-columns: 76px minmax(0, 1fr);
+            padding: 13px 0;
+        }
+
+        .recent-match:last-child {
+            border-bottom: 0;
+        }
+
+        .recent-date {
+            color: #737d89;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .recent-result {
+            align-items: center;
+            display: grid;
+            gap: 8px;
+            grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+            text-align: center;
+        }
+
+        .recent-result span {
+            color: #3c4656;
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .recent-result span:first-child {
+            text-align: right;
+        }
+
+        .recent-result span:last-child {
+            text-align: left;
+        }
+
+        .recent-result strong {
+            background: #f1f4f2;
+            border-radius: 6px;
+            color: #121479;
+            font-size: 13px;
+            min-width: 50px;
+            padding: 5px 7px;
+        }
+
+        .recent-motm {
+            color: #737d89;
+            font-size: 11px;
+            grid-column: 2;
+        }
+
+        .recent-note {
+            color: #89919b;
+            font-size: 10px;
+            margin: 8px 0 0;
+        }
+
+        .dashboard-empty {
+            color: #737d89;
+            font-size: 13px;
+            margin: 10px 0 2px;
         }
 
 
@@ -1005,6 +1296,225 @@
             text-align: center;
         }
 
+        .matches-page,
+        .players-page,
+        .teams-page,
+        .match-form-page,
+        .form-page {
+            flex: 1;
+            padding: 36px clamp(20px, 4vw, 56px);
+        }
+
+        .matches-page,
+        .players-page,
+        .teams-page {
+            max-width: 1320px;
+        }
+
+        .match-form-page {
+            max-width: 1080px;
+        }
+
+        .form-page {
+            max-width: 760px;
+        }
+
+        .matches-header,
+        .players-header {
+            margin-bottom: 24px;
+        }
+
+        .matches-header h1,
+        .players-header h1,
+        .teams-header h1,
+        .match-form-page > h1,
+        .form-page > h1 {
+            color: #172044;
+            font-size: clamp(26px, 3vw, 34px);
+            letter-spacing: -1px;
+            line-height: 1.15;
+        }
+
+        .register-button,
+        .dashboard-link,
+        .month-filter-controls button {
+            transition: background-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .register-button {
+            align-items: center;
+            display: inline-flex;
+            justify-content: center;
+            min-height: 42px;
+        }
+
+        .match {
+            border-color: #e5e9e6;
+            border-radius: 16px;
+            box-shadow: 0 5px 18px rgba(27, 38, 29, 0.045);
+            padding: 22px 26px;
+            transition: box-shadow 0.18s ease, border-color 0.18s ease;
+        }
+
+        .match:hover {
+            border-color: #d3ded4;
+            box-shadow: 0 8px 24px rgba(27, 38, 29, 0.08);
+            transform: none;
+        }
+
+        .match-summary,
+        .players-column,
+        .team-card,
+        .form-page .player-form {
+            background: white;
+            border-color: #e5e9e6;
+            border-radius: 16px;
+            box-shadow: 0 5px 18px rgba(27, 38, 29, 0.045);
+        }
+
+        .match-form-page > h1 {
+            margin: 0 0 24px;
+        }
+
+        .match-summary {
+            background: linear-gradient(115deg, #fff 0%, #f0f6f1 100%);
+        }
+
+        .team-picker {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .team-picker label {
+            background: white;
+            border: 1px solid #e3e8e4;
+            border-radius: 10px;
+            min-height: 44px;
+            padding: 10px 12px;
+        }
+
+        .team-picker input,
+        .own-goal-check input,
+        .radio-group input {
+            accent-color: #121479;
+        }
+
+        .combo input[type="text"],
+        .text-input {
+            background: white;
+            border: 1px solid #cbd4ce;
+            border-radius: 10px;
+            min-height: 44px;
+            padding: 10px 12px;
+            transition: border-color 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .combo input[type="text"]:focus,
+        .text-input:focus {
+            border-color: #121479;
+            box-shadow: 0 0 0 3px rgba(18, 20, 121, 0.1);
+            outline: none;
+        }
+
+        .combo input[type="text"]:focus-visible,
+        .text-input:focus-visible,
+        .month-filter-controls input:focus-visible,
+        .month-filter-controls button:focus-visible {
+            outline: 3px solid #8fd18a;
+            outline-offset: 3px;
+        }
+
+        .own-goal-check {
+            background: #f7faf7;
+            border: 1px solid #e5e9e6;
+            border-radius: 9px;
+            min-height: 42px;
+            padding: 9px 12px;
+        }
+
+        .add-goal-button,
+        .save-button {
+            min-height: 42px;
+        }
+
+        .add-goal-button {
+            background: #121479;
+        }
+
+        .add-goal-button:hover {
+            background: #22258e;
+        }
+
+        .save-button {
+            background: #247a3d;
+        }
+
+        .save-button:hover {
+            background: #1d6632;
+        }
+
+        .combo-list {
+            border-color: #dfe5e1;
+            border-radius: 10px;
+        }
+
+        .combo-option:hover,
+        .combo-option.active {
+            background: #e9f2e8;
+        }
+
+        .players-column,
+        .team-card {
+            background: white;
+            padding: 24px;
+        }
+
+        .form-page .player-form {
+            padding: 24px;
+        }
+
+        .players-column-title,
+        .team-card h2 {
+            font-size: 20px;
+            letter-spacing: -0.3px;
+        }
+
+        .player-row,
+        .team-player-list li {
+            border-color: #edf0ed;
+            min-height: 46px;
+        }
+
+        .player-row:hover {
+            background: #fafbfa;
+        }
+
+        .player-actions a,
+        .player-actions button,
+        .match-actions a,
+        .match-actions button {
+            min-height: 32px;
+        }
+
+        .player-pagination button {
+            min-height: 34px;
+        }
+
+        .match-actions a:focus-visible,
+        .match-actions button:focus-visible,
+        .player-actions a:focus-visible,
+        .player-actions button:focus-visible {
+            border-radius: 4px;
+            outline: 3px solid #8fd18a;
+            outline-offset: 3px;
+        }
+
+        .pagination a,
+        .player-pagination button {
+            min-height: 38px;
+        }
+
 
         /* =========================
             TOASTS
@@ -1054,30 +1564,94 @@
         }
 
 
-        /* =========================
-            DASHBOARD CHARTS
-            ========================= */
-
-        .charts-grid {
+        .ranking-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-            margin-top: 24px;
+            gap: 12px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .chart-card {
-            background-color: white;
-            border: 1px solid #e2e7e2;
-            border-radius: 14px;
-            padding: 20px 22px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        .ranking-card {
+            background: #fafbfa;
+            border: 1px solid #edf0ed;
+            border-radius: 10px;
+            min-width: 0;
+            padding: 14px;
         }
 
-        .chart-card h3 {
-            margin: 0 0 14px;
-            color: #121479;
-            font-size: 15px;
-            text-align: center;
+        .ranking-card h3 {
+            color: #20283a;
+            font-size: 12px;
+            margin: 0 0 12px;
+        }
+
+        .ranking-item + .ranking-item {
+            margin-top: 12px;
+        }
+
+        .ranking-meta {
+            align-items: center;
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .ranking-name {
+            align-items: center;
+            color: #343d4c;
+            display: flex;
+            font-size: 11px;
+            font-weight: 700;
+            gap: 6px;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ranking-position {
+            align-items: center;
+            background: #eef1ef;
+            border-radius: 50%;
+            color: #6a7480;
+            display: inline-flex;
+            flex: 0 0 19px;
+            font-size: 10px;
+            height: 19px;
+            justify-content: center;
+        }
+
+        .ranking-value {
+            color: #20283a;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .ranking-team {
+            color: #858e98;
+            font-size: 10px;
+            margin: 3px 0 6px 25px;
+        }
+
+        .ranking-track {
+            background: #edf0ed;
+            border-radius: 99px;
+            height: 5px;
+            margin-left: 25px;
+            overflow: hidden;
+        }
+
+        .ranking-bar {
+            border-radius: inherit;
+            display: block;
+            height: 100%;
+        }
+
+        .ranking-bar.team-cesar {
+            background: #121479;
+        }
+
+        .ranking-bar.team-breno {
+            background: #72b66f;
         }
 
         :focus-visible {
@@ -1163,9 +1737,48 @@
 
             .players-columns,
             .teams-grid,
-            .stats-grid,
-            .charts-grid {
+            .dashboard-content-grid,
+            .ranking-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .dashboard-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .dashboard-header-tools {
+                align-items: flex-start;
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .dashboard-hero {
+                gap: 8px;
+                grid-template-columns: minmax(0, 1fr) minmax(140px, auto) minmax(0, 1fr);
+                padding: 18px 12px;
+            }
+
+            .dashboard-team,
+            .dashboard-team-breno {
+                justify-content: center;
+                font-size: 14px;
+                gap: 6px;
+            }
+
+            .dashboard-record-score {
+                font-size: 27px;
+                gap: 8px;
+            }
+
+            .team-badge {
+                border-radius: 11px;
+                height: 38px;
+                width: 38px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
             .entry-fields {
@@ -1173,9 +1786,53 @@
                 flex-direction: column;
             }
 
+            .match-form-page .teams {
+                gap: 8px;
+            }
+
+            .team-picker {
+                grid-template-columns: 1fr;
+            }
+
             .combo,
             .combo input[type="text"] {
                 width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-hero {
+                grid-template-columns: 1fr;
+                justify-items: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-actions {
+                flex-wrap: wrap;
+            }
+
+            .month-filter-controls {
+                flex-wrap: wrap;
+            }
+
+            .dashboard-panel {
+                padding: 16px;
+            }
+
+            .recent-match {
+                grid-template-columns: 1fr;
+                gap: 7px;
+            }
+
+            .recent-result {
+                grid-row: 2;
+            }
+
+            .recent-motm {
+                grid-column: 1;
             }
         }
 
@@ -1227,15 +1884,15 @@
                 <img src="{{ url_for('static', filename='logo_name.png') }}" class="logo">
             </a>
             <hr style="width: 100%;">
-            <a href="{{ url_for('home.home') }}" class="navs">Home</a>
-            <a href="{{ url_for('matches.home') }}" class="navs">Matches</a>
-            <a href="{{ url_for('teams.home') }}" class="navs">Teams</a>
-            <a href="{{ url_for('players.home') }}" class="navs">Players</a>
+            <a href="{{ url_for('home.home') }}" class="navs">Início</a>
+            <a href="{{ url_for('matches.home') }}" class="navs">Partidas</a>
+            <a href="{{ url_for('teams.home') }}" class="navs">Times</a>
+            <a href="{{ url_for('players.home') }}" class="navs">Jogadores</a>
             {% if current_user.is_authenticated %}
                 <div class="nav-user">{{ current_user.email }}</div>
                 <form method="POST" action="{{ url_for('auth.logout') }}">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="nav-logout">Log out</button>
+                    <button type="submit" class="nav-logout">Sair</button>
                 </form>
             {% endif %}
         </div>
