@@ -3,124 +3,81 @@
 {% block content %}
 
 <div class="matches-page">
-
     <div class="matches-header">
-
-        <div>
+        <div class="page-heading">
+            <span class="dashboard-eyebrow">HISTÓRICO · EFOOTMATCH</span>
             <h1>Partidas</h1>
+            <p>Acompanhe os resultados e os destaques de cada confronto.</p>
         </div>
-
         {% if current_user.is_admin %}
             <a href="{{ url_for('matches.new') }}" class="register-button">
-                + Registrar partida
+                Registrar partida <span aria-hidden="true">+</span>
             </a>
         {% endif %}
-
     </div>
 
-
     <div class="matches">
-
         {% for m in matches.items %}
-
             <div class="match">
-
-                <!-- Teams + Score -->
                 <div class="teams">
-
                     <span class="home-team">
-                        {{ m.home_team.name }}
+                        <span class="match-team-mark match-team-home" aria-hidden="true">{{ m.home_team.name[:1]|upper }}</span>
+                        <span>{{ m.home_team.name }}</span>
                     </span>
-
                     <span class="score">
                         {{ m.home_score }} - {{ m.away_score }}
                     </span>
-
                     <span class="away-team">
-                        {{ m.away_team.name }}
+                        <span>{{ m.away_team.name }}</span>
+                        <span class="match-team-mark match-team-away" aria-hidden="true">{{ m.away_team.name[:1]|upper }}</span>
                     </span>
-
                 </div>
 
-
-                <!-- Match information -->
                 <div class="match-info">
-
-                    <span>
+                    <span class="match-date">
                         {{ m.created_at|local_date }}
                     </span>
-
                     <span class="motm">
-                        🏆 {{ m.motm_player.name }}
+                        <span aria-hidden="true">MOTM</span> {{ m.motm_player.name }}
                     </span>
-
                 </div>
 
-
-                <!-- Goals -->
                 {% if m.match_goals %}
-
                     <div class="goals">
-
-                        <!-- Home team goals -->
                         <div class="home-goals">
-
                             {% for goal in m.match_goals %}
-
                                 {% if goal.team.id == m.home_team.id %}
-
                                     <div class="goal">
-
                                         <div class="goal-text">
                                             <span class="scorer-name">{{ goal.scorer.name }}{% if goal.own_goal %} (OG){% endif %}</span>
                                             {% if goal.assister %}
                                                 <span class="assist">{{ goal.assister.name }}</span>
                                             {% endif %}
                                         </div>
-
                                         <span class="scorer-icon">⚽</span>
-
                                     </div>
-
                                 {% endif %}
-
                             {% endfor %}
-
                         </div>
 
-
-                        <!-- Away team goals -->
                         <div class="away-goals">
-
                             {% for goal in m.match_goals %}
-
                                 {% if goal.team.id == m.away_team.id %}
-
                                     <div class="goal">
-
                                         <span class="scorer-icon">⚽</span>
-
                                         <div class="goal-text">
                                             <span class="scorer-name">{{ goal.scorer.name }}{% if goal.own_goal %} (OG){% endif %}</span>
                                             {% if goal.assister %}
                                                 <span class="assist">{{ goal.assister.name }}</span>
                                             {% endif %}
                                         </div>
-
                                     </div>
-
                                 {% endif %}
-
                             {% endfor %}
-
                         </div>
-
                     </div>
-
                 {% endif %}
 
-
-                <!-- Actions -->
                 {% if current_user.is_admin %}
                     <div class="match-actions">
                         <a href="{{ url_for('matches.edit', match_id=m.id) }}">Editar</a>
@@ -131,13 +88,14 @@
                         </form>
                     </div>
                 {% endif %}
-
             </div>
-
         {% else %}
-            <p class="matches-empty">Nenhuma partida registrada ainda.</p>
+            <div class="matches-empty">
+                <span class="empty-mark" aria-hidden="true">—</span>
+                <strong>Nenhuma partida por aqui ainda</strong>
+                <span>Quando um confronto for registrado, ele aparecerá nesta lista.</span>
+            </div>
         {% endfor %}
-
     </div>
     {% if matches.pages > 1 %}
         <nav class="pagination" aria-label="Paginação de partidas">

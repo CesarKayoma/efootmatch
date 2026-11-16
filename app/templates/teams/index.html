@@ -4,17 +4,22 @@
 
 <div class="teams-page">
     <div class="teams-header">
-        <div>
+        <div class="page-heading">
+            <span class="dashboard-eyebrow">ELENCOS · EFOOTMATCH</span>
             <h1>Times</h1>
-            <p>Jogadores cadastrados em cada time.</p>
+            <p>Conheça os elencos e os jogadores de cada lado do confronto.</p>
         </div>
+        <span class="teams-total">{{ teams|length }} time{% if teams|length != 1 %}s{% endif %}</span>
     </div>
 
     <div class="teams-grid">
         {% for team in teams %}
-            <section class="team-card" aria-labelledby="team-{{ team.id }}">
+            <section class="team-card team-card-{{ loop.index0 % 2 }}" aria-labelledby="team-{{ team.id }}">
                 <div class="team-card-header">
-                    <h2 id="team-{{ team.id }}">{{ team.name }}</h2>
+                    <div class="team-heading">
+                        <span class="team-initial" aria-hidden="true">{{ team.name[:1]|upper }}</span>
+                        <h2 id="team-{{ team.id }}">{{ team.name }}</h2>
+                    </div>
                     <span class="team-player-count">
                         {{ team.players|length }} jogador{% if team.players|length != 1 %}es{% endif %}
                     </span>
@@ -23,11 +28,14 @@
                 {% if team.players %}
                     <ul class="team-player-list">
                         {% for player in team.players|sort(attribute="name") %}
-                            <li>{{ player.name }}</li>
+                            <li>
+                                <span class="player-initial" aria-hidden="true">{{ player.name[:1]|upper }}</span>
+                                <span>{{ player.name }}</span>
+                            </li>
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p class="teams-empty">Nenhum jogador cadastrado.</p>
+                    <p class="teams-empty">Nenhum jogador cadastrado neste time.</p>
                 {% endif %}
             </section>
         {% else %}

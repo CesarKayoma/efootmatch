@@ -1515,6 +1515,369 @@
             min-height: 38px;
         }
 
+        .page-heading h1 {
+            color: #172044;
+            font-size: clamp(28px, 3vw, 36px);
+            letter-spacing: -1.2px;
+            line-height: 1.1;
+        }
+
+        .matches-page,
+        .teams-page {
+            max-width: 1420px;
+        }
+
+        .matches-header,
+        .teams-header {
+            align-items: flex-end;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .matches-header .page-heading p,
+        .teams-header .page-heading p {
+            color: #687485;
+            font-size: 14px;
+            margin-top: 9px;
+        }
+
+        .matches-header .register-button {
+            gap: 10px;
+            padding: 0 16px;
+        }
+
+        .matches-header .register-button span {
+            font-size: 19px;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .matches {
+            gap: 14px;
+        }
+
+        .match {
+            background: linear-gradient(120deg, #fff 0%, #fcfdfc 100%);
+            border-color: #e5e9e6;
+            border-radius: 18px;
+            padding: 24px clamp(18px, 3vw, 32px);
+        }
+
+        .match .teams {
+            gap: clamp(14px, 3vw, 30px);
+        }
+
+        .match .home-team,
+        .match .away-team {
+            align-items: center;
+            color: #20283a;
+            display: flex;
+            font-size: clamp(16px, 2vw, 19px);
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .match .home-team {
+            justify-content: flex-end;
+        }
+
+        .match .away-team {
+            justify-content: flex-start;
+        }
+
+        .match-team-mark,
+        .team-initial {
+            align-items: center;
+            background: #121479;
+            border-radius: 12px;
+            color: white;
+            display: inline-flex;
+            flex: 0 0 40px;
+            font-size: 15px;
+            font-weight: 800;
+            height: 40px;
+            justify-content: center;
+        }
+
+        .match-team-away,
+        .team-card-1 .team-initial {
+            background: #5da45a;
+        }
+
+        .match .score {
+            background: #f0f5f0;
+            border: 1px solid #e2eae2;
+            border-radius: 12px;
+            color: #172044;
+            font-size: 19px;
+            min-width: 92px;
+            padding: 10px 14px;
+            text-align: center;
+        }
+
+        .match-info {
+            align-items: center;
+            border-top: 0;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+            padding-top: 0;
+        }
+
+        .match-date,
+        .match-info .motm {
+            align-items: center;
+            background: #f4f6f4;
+            border: 1px solid #edf0ed;
+            border-radius: 99px;
+            display: inline-flex;
+            min-height: 30px;
+            padding: 0 11px;
+        }
+
+        .match-info .motm {
+            background: #fff9e9;
+            border-color: #f2e8c9;
+            color: #886b1d;
+        }
+
+        .match-info .motm span {
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .5px;
+            margin-right: 6px;
+        }
+
+        .match .goals {
+            border-top-color: #edf0ed;
+            gap: clamp(20px, 6vw, 64px);
+            margin-top: 18px;
+            padding-top: 16px;
+        }
+
+        .match .assist {
+            color: #748093;
+        }
+
+        .match-actions {
+            border-top: 1px solid #edf0ed;
+            justify-content: flex-end;
+            margin-top: 16px;
+            padding-top: 12px;
+        }
+
+        .matches-empty {
+            align-items: center;
+            background: linear-gradient(135deg, #fff, #f3f7f3);
+            border: 1px dashed #d7e1d7;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 44px 24px;
+        }
+
+        .matches-empty strong {
+            color: #20283a;
+            font-size: 16px;
+        }
+
+        .matches-empty > span:last-child {
+            color: #687485;
+            font-size: 13px;
+        }
+
+        .empty-mark {
+            align-items: center;
+            background: #e8f1e7;
+            border-radius: 14px;
+            color: #247a3d;
+            display: inline-flex;
+            font-size: 22px;
+            height: 44px;
+            justify-content: center;
+            margin-bottom: 4px;
+            width: 44px;
+        }
+
+        .teams-header {
+            margin-bottom: 24px;
+        }
+
+        .teams-total {
+            background: #eaf3e9;
+            border: 1px solid #dcebd9;
+            border-radius: 99px;
+            color: #247a3d;
+            flex-shrink: 0;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px 13px;
+        }
+
+        .teams-grid {
+            gap: 18px;
+        }
+
+        .team-card {
+            border-radius: 18px;
+            overflow: hidden;
+            padding: 0 24px 18px;
+            position: relative;
+        }
+
+        .team-card::before {
+            background: #121479;
+            content: "";
+            height: 4px;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+        }
+
+        .team-card-1::before {
+            background: #5da45a;
+        }
+
+        .team-card-header {
+            border-bottom-color: #edf0ed;
+            margin-bottom: 8px;
+            padding: 22px 0 18px;
+        }
+
+        .team-heading {
+            align-items: center;
+            display: flex;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .team-initial {
+            border-radius: 13px;
+            flex-basis: 44px;
+            height: 44px;
+        }
+
+        .team-card h2 {
+            color: #172044;
+            font-size: 20px;
+        }
+
+        .team-player-count {
+            background: #f3f5f3;
+            border-radius: 99px;
+            color: #687485;
+            flex-shrink: 0;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 7px 10px;
+        }
+
+        .team-player-list li {
+            align-items: center;
+            border-bottom-color: #f0f2f0;
+            display: flex;
+            gap: 11px;
+            min-height: 50px;
+            padding: 8px 0;
+        }
+
+        .player-initial {
+            align-items: center;
+            background: #f0f4f0;
+            border-radius: 50%;
+            color: #586656;
+            display: inline-flex;
+            flex: 0 0 30px;
+            font-size: 11px;
+            font-weight: 800;
+            height: 30px;
+            justify-content: center;
+        }
+
+        .team-card-1 .player-initial {
+            background: #edf5ec;
+            color: #438241;
+        }
+
+        .team-player-list li > span:last-child {
+            color: #343d4c;
+            font-weight: 600;
+        }
+
+        .team-card .teams-empty {
+            background: #f8faf8;
+            border-radius: 10px;
+            margin: 14px 0 0;
+            padding: 16px;
+            text-align: center;
+        }
+
+        @media (max-width: 760px) {
+            .matches-header,
+            .teams-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .match .home-team,
+            .match .away-team {
+                gap: 7px;
+            }
+
+            .match-team-mark {
+                border-radius: 10px;
+                flex-basis: 34px;
+                height: 34px;
+                width: 34px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .match {
+                padding: 19px 14px;
+            }
+
+            .match .teams {
+                gap: 8px;
+            }
+
+            .match .home-team,
+            .match .away-team {
+                flex-direction: column;
+                font-size: 13px;
+                text-align: center;
+            }
+
+            .match .home-team {
+                align-items: flex-end;
+            }
+
+            .match .away-team {
+                align-items: flex-start;
+            }
+
+            .match .score {
+                font-size: 16px;
+                min-width: 76px;
+                padding: 9px 8px;
+            }
+
+            .match-info {
+                gap: 6px;
+            }
+
+            .match .goals {
+                gap: 12px;
+            }
+
+            .team-card {
+                padding-left: 18px;
+                padding-right: 18px;
+            }
+        }
+
 
         /* =========================
             TOASTS
