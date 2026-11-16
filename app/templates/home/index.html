@@ -11,11 +11,19 @@
                         <div class="ranking-meta">
                             <span class="ranking-name">
                                 <span class="ranking-position">{{ loop.index }}</span>
+                                <img class="player-icon" src="{{ url_for('static', filename='player-icon.png') }}" alt="">
                                 {{ entry.player_name }}
                             </span>
                             <span class="ranking-value">{{ entry.value }}</span>
                         </div>
-                        <div class="ranking-team">{{ entry.team_name }}</div>
+                        <div class="ranking-team">
+                            <img
+                                class="team-crest ranking-team-crest"
+                                src="{{ url_for('static', filename='team-cesar.png' if entry.team_name == 'César' else 'team-breno.png') }}"
+                                alt=""
+                            >
+                            {{ entry.team_name }}
+                        </div>
                         <div class="ranking-track" aria-hidden="true">
                             <span
                                 class="ranking-bar {{ 'team-cesar' if entry.team_name == 'César' else 'team-breno' }}"
@@ -36,7 +44,12 @@
     <header class="dashboard-header">
         <div>
             <span class="dashboard-eyebrow">EFOOTMATCH · CONFRONTO</span>
-            <h1>César <span>×</span> Breno</h1>
+            <h1>
+                <img class="team-crest dashboard-title-crest" src="{{ url_for('static', filename='team-cesar.png') }}" alt="">
+                César <span>×</span>
+                <img class="team-crest dashboard-title-crest" src="{{ url_for('static', filename='team-breno.png') }}" alt="">
+                Breno
+            </h1>
             <p>
                 {% if selected_month %}
                     Dados de {{ selected_month[5:7] }}/{{ selected_month[:4] }}.
@@ -74,7 +87,7 @@
 
     <section class="dashboard-hero" aria-label="Histórico de vitórias">
         <div class="dashboard-team dashboard-team-cesar">
-            <span class="team-badge">C</span>
+            <img class="team-crest dashboard-team-crest" src="{{ url_for('static', filename='team-cesar.png') }}" alt="">
             <span>César</span>
         </div>
         <div class="dashboard-record">
@@ -91,7 +104,7 @@
             </p>
         </div>
         <div class="dashboard-team dashboard-team-breno">
-            <span class="team-badge">B</span>
+            <img class="team-crest dashboard-team-crest" src="{{ url_for('static', filename='team-breno.png') }}" alt="">
             <span>Breno</span>
         </div>
     </section>
@@ -141,11 +154,28 @@
                                 {{ match.created_at|local_date }}
                             </time>
                             <div class="recent-result">
-                                <span>{{ match.home_team.name }}</span>
+                                <span>
+                                    <img
+                                        class="team-crest recent-team-crest"
+                                        src="{{ url_for('static', filename='team-cesar.png' if match.home_team.name == 'César' else 'team-breno.png') }}"
+                                        alt=""
+                                    >
+                                    {{ match.home_team.name }}
+                                </span>
                                 <strong>{{ match.home_score }} : {{ match.away_score }}</strong>
-                                <span>{{ match.away_team.name }}</span>
+                                <span>
+                                    <img
+                                        class="team-crest recent-team-crest"
+                                        src="{{ url_for('static', filename='team-cesar.png' if match.away_team.name == 'César' else 'team-breno.png') }}"
+                                        alt=""
+                                    >
+                                    {{ match.away_team.name }}
+                                </span>
                             </div>
-                            <span class="recent-motm">MOTM · {{ match.motm_player.name }}</span>
+                            <span class="recent-motm">
+                                <img class="player-icon" src="{{ url_for('static', filename='player-icon.png') }}" alt="">
+                                MOTM · {{ match.motm_player.name }}
+                            </span>
                         </li>
                     {% endfor %}
                 </ol>

@@ -10,9 +10,15 @@
     <div class="match-summary">
 
         <div class="teams">
-            <span class="home-team">{{ cesar_team.name }}</span>
+            <span class="home-team">
+                <img class="team-crest match-team-crest" src="{{ url_for('static', filename='team-cesar.png') }}" alt="">
+                {{ cesar_team.name }}
+            </span>
             <span class="score" id="score-display">0 - 0</span>
-            <span class="away-team">{{ breno_team.name }}</span>
+            <span class="away-team">
+                {{ breno_team.name }}
+                <img class="team-crest match-team-crest" src="{{ url_for('static', filename='team-breno.png') }}" alt="">
+            </span>
         </div>
 
         <div class="goals" id="goals-summary">
@@ -34,10 +40,12 @@
             <div class="team-picker">
                 <label>
                     <input type="radio" name="team-picker" value="cesar" id="team-cesar" checked>
+                    <img class="team-crest team-picker-crest" src="{{ url_for('static', filename='team-cesar.png') }}" alt="">
                     {{ cesar_team.name }}
                 </label>
                 <label>
                     <input type="radio" name="team-picker" value="breno" id="team-breno">
+                    <img class="team-crest team-picker-crest" src="{{ url_for('static', filename='team-breno.png') }}" alt="">
                     {{ breno_team.name }}
                 </label>
             </div>

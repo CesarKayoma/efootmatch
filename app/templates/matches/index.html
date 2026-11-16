@@ -21,7 +21,11 @@
             <div class="match">
                 <div class="teams">
                     <span class="home-team">
-                        <span class="match-team-mark match-team-home" aria-hidden="true">{{ m.home_team.name[:1]|upper }}</span>
+                        <img
+                            class="team-crest match-team-crest"
+                            src="{{ url_for('static', filename='team-cesar.png' if m.home_team.name == 'César' else 'team-breno.png') }}"
+                            alt=""
+                        >
                         <span>{{ m.home_team.name }}</span>
                     </span>
                     <span class="score">
@@ -29,7 +33,11 @@
                     </span>
                     <span class="away-team">
                         <span>{{ m.away_team.name }}</span>
-                        <span class="match-team-mark match-team-away" aria-hidden="true">{{ m.away_team.name[:1]|upper }}</span>
+                        <img
+                            class="team-crest match-team-crest"
+                            src="{{ url_for('static', filename='team-cesar.png' if m.away_team.name == 'César' else 'team-breno.png') }}"
+                            alt=""
+                        >
                     </span>
                 </div>
 
@@ -38,7 +46,9 @@
                         {{ m.created_at|local_date }}
                     </span>
                     <span class="motm">
-                        <span aria-hidden="true">MOTM</span> {{ m.motm_player.name }}
+                        <span aria-hidden="true">MOTM</span>
+                        <img class="player-icon" src="{{ url_for('static', filename='player-icon.png') }}" alt="">
+                        {{ m.motm_player.name }}
                     </span>
                 </div>
 
@@ -49,9 +59,9 @@
                                 {% if goal.team.id == m.home_team.id %}
                                     <div class="goal">
                                         <div class="goal-text">
-                                            <span class="scorer-name">{{ goal.scorer.name }}{% if goal.own_goal %} (OG){% endif %}</span>
+                                            <span class="scorer-name"><img class="player-icon" src="{{ url_for('static', filename='player-icon.png') }}" alt="">{{ goal.scorer.name }}{% if goal.own_goal %} (OG){% endif %}</span>
                                             {% if goal.assister %}
-                                                <span class="assist">{{ goal.assister.name }}</span>
+                                                <span class="assist"><img class="player-icon" src="{{ url_for('static', filename='player-icon.png') }}" alt="">{{ goal.assister.name }}</span>
                                             {% endif %}
                                         </div>
                                         <span class="scorer-icon">⚽</span>
@@ -66,9 +76,9 @@
                                     <div class="goal">
                                         <span class="scorer-icon">⚽</span>
                                         <div class="goal-text">
-                                            <span class="scorer-name">{{ goal.scorer.name }}{% if goal.own_goal %} (OG){% endif %}</span>
+                                            <span class="scorer-name"><img class="player-icon" src="{{ url_for('static', filename='player-icon.png') }}" alt="">{{ goal.scorer.name }}{% if goal.own_goal %} (OG){% endif %}</span>
                                             {% if goal.assister %}
-                                                <span class="assist">{{ goal.assister.name }}</span>
+                                                <span class="assist"><img class="player-icon" src="{{ url_for('static', filename='player-icon.png') }}" alt="">{{ goal.assister.name }}</span>
                                             {% endif %}
                                         </div>
                                     </div>

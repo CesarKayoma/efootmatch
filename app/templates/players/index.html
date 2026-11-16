@@ -18,14 +18,20 @@
         <!-- César -->
         <div class="players-column">
 
-            <h2 class="players-column-title">{{ cesar_team.name }}</h2>
+            <h2 class="players-column-title">
+                <img class="team-crest players-team-crest" src="{{ url_for('static', filename='team-cesar.png') }}" alt="">
+                {{ cesar_team.name }}
+            </h2>
 
             <div class="players-list" data-player-list>
                 {% for player in cesar_team.players|sort(attribute="name") %}
 
                     <div class="player-row">
 
-                        <span class="player-name">{{ player.name }}</span>
+                        <span class="player-name">
+                            <img class="player-icon" src="{{ url_for('static', filename='player-icon.png') }}" alt="">
+                            {{ player.name }}
+                        </span>
 
                         {% if current_user.is_admin %}
                         <div class="player-actions">
@@ -59,14 +65,20 @@
         <!-- Breno -->
         <div class="players-column">
 
-            <h2 class="players-column-title">{{ breno_team.name }}</h2>
+            <h2 class="players-column-title">
+                <img class="team-crest players-team-crest" src="{{ url_for('static', filename='team-breno.png') }}" alt="">
+                {{ breno_team.name }}
+            </h2>
 
             <div class="players-list" data-player-list>
                 {% for player in breno_team.players|sort(attribute="name") %}
 
                     <div class="player-row">
 
-                        <span class="player-name">{{ player.name }}</span>
+                        <span class="player-name">
+                            <img class="player-icon" src="{{ url_for('static', filename='player-icon.png') }}" alt="">
+                            {{ player.name }}
+                        </span>
 
                         {% if current_user.is_admin %}
                         <div class="player-actions">

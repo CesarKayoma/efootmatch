@@ -407,6 +407,24 @@
             font-weight: 400;
         }
 
+        .dashboard-title-crest {
+            height: 1.05em;
+            vertical-align: -0.12em;
+            width: 1.05em;
+        }
+
+        .team-crest {
+            display: inline-block;
+            flex: 0 0 auto;
+            object-fit: contain;
+            vertical-align: middle;
+        }
+
+        .dashboard-team-crest {
+            height: 48px;
+            width: 48px;
+        }
+
         .dashboard-header p {
             margin: 8px 0 0;
             color: #666;
@@ -539,22 +557,6 @@
 
         .dashboard-team-breno {
             justify-content: flex-end;
-        }
-
-        .team-badge {
-            align-items: center;
-            background: #121479;
-            border-radius: 13px;
-            color: white;
-            display: inline-flex;
-            font-size: 18px;
-            height: 48px;
-            justify-content: center;
-            width: 48px;
-        }
-
-        .dashboard-team-breno .team-badge {
-            background: #5da45a;
         }
 
         .dashboard-record {
@@ -699,19 +701,29 @@
         }
 
         .recent-result span {
+            align-items: center;
             color: #3c4656;
+            display: flex;
             font-size: 12px;
+            gap: 5px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
 
         .recent-result span:first-child {
+            justify-content: flex-end;
             text-align: right;
         }
 
         .recent-result span:last-child {
+            justify-content: flex-start;
             text-align: left;
+        }
+
+        .recent-team-crest {
+            height: 18px;
+            width: 18px;
         }
 
         .recent-result strong {
@@ -1127,9 +1139,12 @@
         }
 
         .player-name {
+            align-items: center;
+            display: inline-flex;
             font-size: 15px;
             font-weight: 600;
             color: #222;
+            gap: 9px;
         }
 
         .player-actions {
@@ -1387,11 +1402,19 @@
         }
 
         .team-picker label {
+            align-items: center;
             background: white;
             border: 1px solid #e3e8e4;
             border-radius: 10px;
+            display: flex;
+            gap: 8px;
             min-height: 44px;
             padding: 10px 12px;
+        }
+
+        .team-picker-crest {
+            height: 26px;
+            width: 26px;
         }
 
         .team-picker input,
@@ -1586,23 +1609,9 @@
             justify-content: flex-start;
         }
 
-        .match-team-mark,
-        .team-initial {
-            align-items: center;
-            background: #121479;
-            border-radius: 12px;
-            color: white;
-            display: inline-flex;
-            flex: 0 0 40px;
-            font-size: 15px;
-            font-weight: 800;
+        .match-team-crest {
             height: 40px;
-            justify-content: center;
-        }
-
-        .match-team-away,
-        .team-card-1 .team-initial {
-            background: #5da45a;
+            width: 40px;
         }
 
         .match .score {
@@ -1753,10 +1762,20 @@
             min-width: 0;
         }
 
-        .team-initial {
-            border-radius: 13px;
-            flex-basis: 44px;
+        .team-heading .team-crest {
             height: 44px;
+            width: 44px;
+        }
+
+        .players-column-title {
+            align-items: center;
+            display: flex;
+            gap: 9px;
+        }
+
+        .players-team-crest {
+            height: 32px;
+            width: 32px;
         }
 
         .team-card h2 {
@@ -1781,6 +1800,44 @@
             gap: 11px;
             min-height: 50px;
             padding: 8px 0;
+        }
+
+        .player-icon {
+            display: inline-block;
+            flex: 0 0 22px;
+            height: 22px;
+            object-fit: contain;
+            vertical-align: middle;
+            width: 22px;
+        }
+
+        .ranking-name .player-icon,
+        .recent-motm .player-icon {
+            flex-basis: 18px;
+            height: 18px;
+            width: 18px;
+        }
+
+        .ranking-team-crest {
+            height: 14px;
+            margin-right: 4px;
+            vertical-align: -2px;
+            width: 14px;
+        }
+
+        .recent-motm {
+            align-items: center;
+            display: inline-flex;
+            gap: 6px;
+        }
+
+        .scorer-name .player-icon,
+        .assist .player-icon,
+        .match-info .motm .player-icon {
+            flex-basis: 16px;
+            height: 16px;
+            margin-right: 4px;
+            width: 16px;
         }
 
         .player-initial {
@@ -1826,9 +1883,7 @@
                 gap: 7px;
             }
 
-            .match-team-mark {
-                border-radius: 10px;
-                flex-basis: 34px;
+            .match-team-crest {
                 height: 34px;
                 width: 34px;
             }
@@ -2134,8 +2189,7 @@
                 gap: 8px;
             }
 
-            .team-badge {
-                border-radius: 11px;
+            .dashboard-team-crest {
                 height: 38px;
                 width: 38px;
             }

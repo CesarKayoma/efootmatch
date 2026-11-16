@@ -17,7 +17,11 @@
             <section class="team-card team-card-{{ loop.index0 % 2 }}" aria-labelledby="team-{{ team.id }}">
                 <div class="team-card-header">
                     <div class="team-heading">
-                        <span class="team-initial" aria-hidden="true">{{ team.name[:1]|upper }}</span>
+                        <img
+                            class="team-crest"
+                            src="{{ url_for('static', filename='team-cesar.png' if team.name == 'César' else 'team-breno.png') }}"
+                            alt=""
+                        >
                         <h2 id="team-{{ team.id }}">{{ team.name }}</h2>
                     </div>
                     <span class="team-player-count">
@@ -29,7 +33,7 @@
                     <ul class="team-player-list">
                         {% for player in team.players|sort(attribute="name") %}
                             <li>
-                                <span class="player-initial" aria-hidden="true">{{ player.name[:1]|upper }}</span>
+                                <img class="player-icon" src="{{ url_for('static', filename='player-icon.png') }}" alt="">
                                 <span>{{ player.name }}</span>
                             </li>
                         {% endfor %}
