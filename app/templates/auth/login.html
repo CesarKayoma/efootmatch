@@ -28,28 +28,41 @@
             width: min(100%, 440px);
         }
         .brand {
-            align-items: center;
-            color: #121479;
-            display: flex;
-            font-size: 12px;
-            font-weight: 800;
-            gap: 10px;
-            letter-spacing: 1.2px;
-            margin-bottom: 30px;
-            text-transform: uppercase;
+            margin-bottom: 22px;
         }
-        .brand-mark {
+        .brand-logo {
+            display: block;
+            height: auto;
+            max-width: 240px;
+            width: 100%;
+        }
+        .login-matchup {
             align-items: center;
-            background: linear-gradient(145deg, #121479, #252a9a);
-            border-radius: 12px;
-            box-shadow: 0 6px 14px rgba(18, 20, 121, .2);
-            color: white;
-            display: inline-flex;
-            font-size: 13px;
-            height: 38px;
-            justify-content: center;
-            letter-spacing: -.5px;
-            width: 38px;
+            background: #f3f8f2;
+            border: 1px solid #e2e9e3;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            padding: 12px 18px;
+        }
+        .login-team {
+            align-items: center;
+            color: #172044;
+            display: flex;
+            font-size: 14px;
+            font-weight: 750;
+            gap: 8px;
+        }
+        .login-team img {
+            height: 34px;
+            object-fit: contain;
+            width: 34px;
+        }
+        .login-versus {
+            color: #8a94a6;
+            font-size: 20px;
+            font-weight: 500;
         }
         .eyebrow {
             color: #687485;
@@ -97,7 +110,20 @@
 </head>
 <body>
     <main>
-        <div class="brand"><span class="brand-mark" aria-hidden="true">EF</span> eFootMatch</div>
+        <div class="brand">
+            <img class="brand-logo" src="{{ url_for('static', filename='logo_name.png') }}" alt="eFootMatch">
+        </div>
+        <div class="login-matchup" aria-label="Confronto entre César e Breno">
+            <div class="login-team">
+                <img src="{{ url_for('static', filename='team-cesar.png') }}" alt="">
+                <span>César</span>
+            </div>
+            <span class="login-versus" aria-hidden="true">×</span>
+            <div class="login-team">
+                <img src="{{ url_for('static', filename='team-breno.png') }}" alt="">
+                <span>Breno</span>
+            </div>
+        </div>
         <span class="eyebrow">Sua próxima partida começa aqui</span>
         <h1>Bem-vindo de volta</h1>
         <p class="intro">Entre para acompanhar os confrontos, os times e os destaques.</p>
